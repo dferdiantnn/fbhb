@@ -32,13 +32,17 @@ def menu_build_app():
         if current_os == "windows":
             print(Fore.CYAN + "   Sedang mengompilasi menggunakan PyInstaller...")
             try:
-                subprocess.run([
+                cmd = [
                     sys.executable, "-m", "PyInstaller",
                     "--onefile",
                     "--name", "HACKBEN",
-                    "--clean",
-                    "main.py"
-                ], check=True)
+                    "--clean"
+                ]
+                if os.path.exists("logo.ico"):
+                    cmd.extend(["--icon", "logo.ico"])
+                cmd.append("main.py")
+
+                subprocess.run(cmd, check=True)
                 print(Fore.GREEN + "\n   🎉 Build Berhasil! File EXE tersimpan di folder: dist/HACKBEN.exe")
             except Exception as err:
                 print(Fore.RED + f"   ❌ Gagal melakukan build: {err}")
@@ -47,8 +51,9 @@ def menu_build_app():
             print(Fore.WHITE + "   Binary .EXE Windows membutuhkan environment Windows untuk dikompilasi.")
             print(Fore.CYAN + "\n   💡 Cara Build di PC/Laptop Windows kamu:")
             print(Fore.WHITE + "   1. Clone repo ini di Windows.")
-            print(Fore.WHITE + "   2. Jalankan perintah: " + Fore.GREEN + "pip install pyinstaller")
-            print(Fore.WHITE + "   3. Jalankan: " + Fore.GREEN + "pyinstaller --onefile --name HACKBEN main.py")
+            print(Fore.WHITE + "   2. Simpan file logo.ico di folder hackben.")
+            print(Fore.WHITE + "   3. Jalankan: " + Fore.GREEN + "pip install pyinstaller")
+            print(Fore.WHITE + "   4. Jalankan: " + Fore.GREEN + "pyinstaller --onefile --icon=logo.ico --name HACKBEN main.py")
         
         input(Fore.YELLOW + "\n   [Tekan Enter untuk kembali...]" + Fore.RESET)
 
