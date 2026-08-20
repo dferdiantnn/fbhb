@@ -12,7 +12,14 @@ import urllib.parse
 import json
 import time
 import threading
-from colorama import Fore
+try:
+    from colorama import Fore, Style
+except ImportError:
+    class _EmptyColor:
+        def __getattr__(self, name):
+            return ""
+    Fore = _EmptyColor()
+    Style = _EmptyColor()
 
 GITHUB_REPO_URL = "https://github.com/dferdiantnn/fbhb.git"
 GITHUB_RAW_VERSION_URL = "https://raw.githubusercontent.com/dferdiantnn/fbhb/main/core/ui.py"
