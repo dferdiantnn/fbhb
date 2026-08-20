@@ -66,7 +66,7 @@ def print_banner(store_name: str | None = None, mode: str | None = None, headles
    ██╔══██║██╔══██║██║     ██╔═██╗ ██╔══██╗██╔══╝  ██║╚██╗██║
    ██║  ██║██║  ██║╚██████╗██║ ╚██╗██████╔╝███████╗██║ ╚████║
    ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚═════╝ ╚══════╝╚═╝  ╚═══╝
-    """ + Fore.YELLOW + "   ⚡ Universal Cross-Platform Automation Suite ⚡  " + Fore.CYAN + "by Ferr")
+    """ + Fore.YELLOW + "      ⚡ Universal Cross-Platform Automation Suite by Ferr ⚡")
     print(Fore.CYAN + "=" * 65)
     print(Fore.WHITE + f"   📦 Versi     : {VERSION}")
     if store_name:
