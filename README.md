@@ -1,51 +1,57 @@
-# ⚡ HACKBEN - Universal Cross-Platform Automation Suite
+# ⚡ HACKBEN - Universal Next-Gen Automation Suite
 
-Bot otomatisasi feedback kuesioner berbasis **Python** & **Playwright** dengan arsitektur modern yang mendukung penuh **macOS (Apple Silicon & Intel)**, **Windows**, dan **Linux / Chromebook**.
-
----
-
-## 🌟 Fitur Utama
-
-- **100% Cross-Platform:** Berjalan secara native tanpa dependensi biner platform tertentu.
-- **Headless & Background Operation:** Berjalan sepenuhnya di latar belakang tanpa membuka jendela visual (bisa diatur ke mode visual jika diinginkan).
-- **In-Place Progress & Spinner:** Tampilan terminal interaktif dan informatif (Step 1 s/d 7) dengan animasi spinner yang tidak memenuhi baris baru.
-- **100+ Authentic Device Fingerprints:** Database profil perangkat seluler lengkap (iPhone, Samsung Galaxy, Xiaomi, Poco, Vivo, Oppo, Infinix, ROG, Google Pixel) dengan rotasi otomatis dan memori *cooldown* 48 jam.
-- **Smart Dynamic Waits:** Interaksi cepat, tepat, dan akurat seketika elemen muncul di DOM tanpa *blind delay* yang rawan gagal.
-- **Universal Proxy Routing:** Mendukung integrasi SOCKS5 / HTTP Proxy per sesi browser untuk manipulasi dan rotasi IP.
-- **Application Builder Helper:** Menu pembuatan aplikasi desktop mandiri (`.exe`) untuk Windows dan panduan terminal untuk macOS/Linux.
+> *High-Performance, Zero-Latency, Cross-Platform Feedback Automation Engine powered by Playwright Async & Dynamic Context Emulation.*
 
 ---
 
-## 📁 Struktur Proyek
+## 🚀 Apa yang Baru di Versi Terbaru? (Legacy vs Next-Gen)
+
+Arsitektur **HACKBEN** telah di-refactor secara menyeluruh dari arsitektur monolitik konvensional menjadi modul terdistribusi yang modern, stabil, dan berkinerja tinggi.
+
+| Fitur & Spesifikasi | 🛑 Versi Lama (Legacy v8.x / v9.x) | ⚡ Versi Terbaru (Next-Gen v10+) |
+| :--- | :--- | :--- |
+| **Sistem Eksekusi** | Terikat Windows murni (`.exe`, `ctypes.windll`, `taskkill`) | **100% Universal Cross-Platform** (macOS M-Series/Intel, Windows, Linux) |
+| **Sistem Pembaruan** | Manual download & timpa file sendiri | **⚡ Seamless Auto-Update:** Otomatis memeriksa & menimpa ke rilis GitHub terbaru saat startup |
+| **Browser Lifecycle** | Spawn jendela visual GUI berat & rentan crash | **Headless Background Engine:** Berjalan senyap, ringan, hemat memori RAM/CPU |
+| **Elemen & Waiting** | *Blind Sleep (`time.sleep`)* yang rawan timeout | **Smart Dynamic DOM Waiting:** Deteksi elemen presisi tinggi (*zero miss aim*) |
+| **Fingerprint Isolation**| Restart seluruh proses browser berulang kali | **Isolated Browser Context Sandbox:** Profil perangkat & storage bersih per sesi |
+| **Device Library** | ~25 perangkat lawas | **100+ Flagship Mobile Fingerprints** dengan memori *cooldown* 48 jam |
+| **Network & Routing** | Ketergantungan aplikasi pihak ketiga desktop | **Native SOCKS5 / HTTP Proxy Tunneling** di level konteks sesi |
+
+> 💡 **Poin Penting:** Repository ini akan terus mendapatkan *continuous deployment (CD)* & *rolling release* langsung dari GitHub untuk memastikan bypass DOM selector dan akurasi bot selalu sinkron dengan sistem target terbaru.
+
+---
+
+## 📁 Struktur Modular
 
 ```text
 hackben/
-├── main.py              # Entry point utama & Dashboard interaktif
+├── main.py              # Entry point utama & CLI Interactive Dashboard
 ├── core/
-│   ├── engine.py        # Mesin otomasi Playwright (Smart Wait & Flow Kuesioner)
-│   ├── network.py       # Pengelola Proxy, IP Checker & Pembersih Proses
-│   ├── ui.py            # Animasi Spinner & Indikator Step Progress
-│   └── builder.py       # Menu Build Desktop App (.exe / info OS)
+│   ├── engine.py        # Playwright Core Engine (Dynamic Waiting & Automated DOM Flow)
+│   ├── updater.py       # Seamless Startup Auto-Update Manager
+│   ├── network.py       # Universal Proxy Handler & Process Terminator
+│   ├── ui.py            # Real-Time In-Place Step Progress & Animated Spinner
+│   └── builder.py       # Standalone Desktop Compilation Helper (.exe / OS info)
 ├── data/
-│   ├── devices.py       # Database 100+ Fingerprint Perangkat & Cooldown Memory
-│   └── stores.py        # Database Kode & Nama Store
-├── requirements.txt     # Daftar dependensi Python
+│   ├── devices.py       # 100+ Authentic Mobile Fingerprints & Cooldown Tracker
+│   └── stores.py        # Store Codes & Outlet Mapping Database
+├── requirements.txt     # Dependensi Python
 └── README.md
 ```
 
 ---
 
-## 🚀 Cara Instalasi & Menjalankan
+## 💻 Cara Instalasi & Menjalankan
 
-### 1. Kloning Repositori
+### 1. Clone Repositori
 ```bash
 git clone https://github.com/dferdiantnn/fbhb.git
 cd fbhb
 ```
 
-### 2. Buat Virtual Environment & Install Dependensi
-
-* **macOS / Linux:**
+### 2. Setup Environment & Dependensi
+* **macOS / Linux / Chromebook:**
   ```bash
   python3 -m venv venv
   source venv/bin/activate
@@ -61,12 +67,8 @@ cd fbhb
   playwright install chromium
   ```
 
-### 3. Jalankan Program
+### 3. Eksekusi Program
 ```bash
 python main.py
 ```
-
----
-
-## 📜 Lisensi & Penggunaan
-Project ini dibuat untuk tujuan otomasi, benchmarking, dan pengujian keandalan antarmuka web. Gunakan secara bijak dan bertanggung jawab.
+*(Program akan otomatis memeriksa pembaruan ke GitHub sebelum memulai menu).*

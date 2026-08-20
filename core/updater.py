@@ -1,58 +1,79 @@
 """
-Auto-Updater and Telemetry/Bridge Module for HACKBEN.
+Auto-Updater and Telegram Telemetry Bridge for HACKBEN.
 """
 
 import sys
 import os
 import subprocess
 import urllib.request
+import urllib.parse
 import json
 import time
 from colorama import Fore
 
 GITHUB_REPO_URL = "https://github.com/dferdiantnn/fbhb.git"
 GITHUB_RAW_VERSION_URL = "https://raw.githubusercontent.com/dferdiantnn/fbhb/main/core/ui.py"
-TELEMETRY_WEBHOOK_URL = ""  # Dapat diisi webhook Discord / Telegram / Server API kamu
 
-def send_telemetry(event: str, store_name: str, session_num: int, total_sessions: int, status: str = "running", extra: str = "") -> None:
-    """
-    Send lightweight telemetry event to your remote bridge/webhook.
-    Runs non-blockingly with low timeout so it never slows down the bot.
-    """
-    if not TELEMETRY_WEBHOOK_URL:
-        # Fallback lokal / logger jika webhook belum diisi URL oleh owner
+# --- TELEGRAM BOT CONFIGURATION ---
+TELEGRAM_BOT_TOKEN = "7950796362:AAG_YOUR_TOKEN_HERE"  # Ganti dengan Token Bot Telegram dari BotFather
+TELEGRAM_CHAT_ID = "YOUR_CHAT_ID_HERE"                 # Ganti dengan Chat ID Telegram kamu
+
+def send_telegram_alert(text: str) -> None:
+    """Send real-time alert to Telegram bot non-blockingly."""
+    if not TELEGRAM_BOT_TOKEN or "YOUR_TOKEN" in TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID or "YOUR_CHAT_ID" in TELEGRAM_CHAT_ID:
         return
 
-    payload = {
-        "event": event,
-        "store": store_name,
-        "session": f"{session_num}/{total_sessions}",
-        "status": status,
-        "extra": extra,
-        "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")
-    }
-
     try:
-        data = json.dumps(payload).encode("utf-8")
-        req = urllib.request.Request(
-            TELEMETRY_WEBHOOK_URL,
-            data=data,
-            headers={
-                "Content-Type": "application/json",
-                "User-Agent": "HACKBEN-Bridge/10.0"
-            }
-        )
+        url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+        payload = urllib.parse.urlencode({
+            "chat_id": TELEGRAM_CHAT_ID,
+            "text": text,
+            "parse_mode": "Markdown"
+        }).encode("utf-8")
+        
+        req = urllib.request.Request(url, data=payload, headers={"User-Agent": "HACKBEN-Telemetry/10.0"})
         with urllib.request.urlopen(req, timeout=3) as _:
             pass
     except Exception:
-        # Silent ignore agar bot utama tetap lancar jika jaringan offline
         pass
 
 
-def check_for_updates() -> tuple[bool, str]:
+def send_telemetry(event: str, store_name: str, session_num: int, total_sessions: int, status: str = "running", extra: str = "") -> None:
+    """Send structured telemetry data to Telegram."""
+    if event == "start_session":
+        msg = (
+            f"🚀 *[HACKBEN BOT STARTED]*\n"
+            f"🏢 *Store Target:* `{store_name}`\n"
+            f"📊 *Total Sesi:* `{total_sessions}`\n"
+            f"⚙️ *Konfigurasi:* `{extra}`\n"
+            f"⏰ *Waktu:* `{time.strftime('%Y-%m-%d %H:%M:%S')}`"
+        )
+    elif event == "session_progress":
+        icon = "✅" if status == "success" else "❌"
+        msg = (
+            f"{icon} *[PROGRESS SESI {session_num}/{total_sessions}]*\n"
+            f"🏢 *Store:* `{store_name}`\n"
+            f"📡 *Status:* `{status.upper()}`\n"
+            f"⏰ *Waktu:* `{time.strftime('%H:%M:%S')}`"
+        )
+    elif event == "finish_session":
+        msg = (
+            f"🏁 *[MISSION COMPLETED]*\n"
+            f"🏢 *Store:* `{store_name}`\n"
+            f"🎉 *Total Sukses:* `{session_num}/{total_sessions}`\n"
+            f"⏰ *Waktu Selesai:* `{time.strftime('%Y-%m-%d %H:%M:%S')}`"
+        )
+    else:
+        msg = f"ℹ️ *[EVENT]* `{event}` - Store: `{store_name}` ({status})"
+
+    send_telegram_alert(msg)
+
+
+def check_and_apply_auto_update_on_launch() -> None:
     """
-    Check GitHub repo for newer version.
-    Returns (has_update, latest_version_string).
+    Silent & Fast Auto-Update Checker upon application startup.
+    If a newer version exists on GitHub, automatically pulls and replaces files,
+    then seamlessly restarts. If up to date, silently proceeds immediately.
     """
     from core.ui import VERSION as CURRENT_VERSION
     try:
@@ -60,36 +81,35 @@ def check_for_updates() -> tuple[bool, str]:
             GITHUB_RAW_VERSION_URL,
             headers={"User-Agent": "Mozilla/5.0"}
         )
-        with urllib.request.urlopen(req, timeout=5) as resp:
+        with urllib.request.urlopen(req, timeout=3) as resp:
             content = resp.read().decode("utf-8")
             for line in content.splitlines():
                 if line.startswith("VERSION ="):
                     remote_ver = line.split("=")[1].strip().strip('"').strip("'")
                     if remote_ver != CURRENT_VERSION:
-                        return True, remote_ver
-                    return False, CURRENT_VERSION
+                        print(Fore.CYAN + f"\n   [🔄] Pembaruan terdeteksi: {remote_ver} (Versi Lokal: {CURRENT_VERSION})")
+                        print(Fore.YELLOW + "   [⚡] Mengunduh dan menerapkan update terbaru dari GitHub...")
+                        if perform_auto_update():
+                            print(Fore.GREEN + "   [✔] Update selesai diterapkan! Memulai ulang program...")
+                            time.sleep(1)
+                            # Restart script with original arguments
+                            os.execv(sys.executable, [sys.executable] + sys.argv)
+                    return
     except Exception:
         pass
-    return False, CURRENT_VERSION
 
 
 def perform_auto_update() -> bool:
     """
     Pulls latest version from GitHub repository and replaces local files cleanly.
     """
-    print(Fore.CYAN + "   [1/3] Memeriksa remote repository Git...")
     try:
-        # If running inside a git cloned repo
         if os.path.exists(".git"):
             subprocess.run(["git", "fetch", "--all"], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            print(Fore.CYAN + "   [2/3] Mengunduh pembaruan dan menimpa file lama...")
             subprocess.run(["git", "reset", "--hard", "origin/main"], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             subprocess.run(["git", "clean", "-fd"], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            print(Fore.GREEN + "   [3/3] Pembaruan berhasil diterapkan! File lama berhasil ditimpa.")
             return True
         else:
-            # Fallback: Unduh archive zip langsung dari GitHub jika user download manual tanpa git
-            print(Fore.YELLOW + "   [!] Repository .git tidak ditemukan. Menggunakan fast-pull script...")
             zip_url = "https://github.com/dferdiantnn/fbhb/archive/refs/heads/main.zip"
             import zipfile
             import io
@@ -97,7 +117,6 @@ def perform_auto_update() -> bool:
             with urllib.request.urlopen(req, timeout=15) as resp:
                 zip_data = resp.read()
             with zipfile.ZipFile(io.BytesIO(zip_data)) as z:
-                # Extract all files stripping the top folder 'fbhb-main/'
                 for member in z.namelist():
                     parts = member.split('/', 1)
                     if len(parts) > 1 and parts[1]:
@@ -108,8 +127,6 @@ def perform_auto_update() -> bool:
                             os.makedirs(os.path.dirname(target_path), exist_ok=True)
                             with open(target_path, "wb") as outfile:
                                 outfile.write(z.read(member))
-            print(Fore.GREEN + "   [3/3] File berhasil diperbarui dan ditimpa dari GitHub!")
             return True
-    except Exception as err:
-        print(Fore.RED + f"   ❌ Gagal melakukan pembaruan otomatis: {err}")
+    except Exception:
         return False
