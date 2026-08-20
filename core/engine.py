@@ -250,21 +250,18 @@ def execute_feedback_session(
             try:
                 page.wait_for_url("**/arigatou", timeout=25000)
                 spinner.stop(f"Sesi {session_num}/{total_sessions} BERHASIL dikirim! [Device: {device['name']}]", success=True)
-                send_telemetry("session_progress", target_store, session_num, total_sessions, status="success")
                 browser.close()
-                return True
+                return True, None, None
             except PlaywrightTimeoutError:
                 body_text = page.inner_text("body").lower()
                 if "terima kasih" in body_text or "arigatou" in body_text or "sukses" in body_text:
                     spinner.stop(f"Sesi {session_num}/{total_sessions} BERHASIL dikirim!", success=True)
-                    send_telemetry("session_progress", target_store, session_num, total_sessions, status="success")
                     browser.close()
-                    return True
+                    return True, None, None
                 else:
                     spinner.stop(f"Sesi {session_num}/{total_sessions} selesai (Redirect timeout).", success=True)
-                    send_telemetry("session_progress", target_store, session_num, total_sessions, status="success")
                     browser.close()
-                    return True
+                    return True, None, None
 
         except Exception as e:
             err_msg = str(e)
@@ -276,11 +273,10 @@ def execute_feedback_session(
                     pass
             
             spinner.stop(f"Sesi {session_num}/{total_sessions} Gagal: {err_msg[:60]}", success=False)
-            send_telemetry("session_progress", target_store, session_num, total_sessions, status="failed", extra=err_msg, screenshot_bytes=screenshot_bytes)
             
             if browser:
                 try:
                     browser.close()
                 except Exception:
                     pass
-            return False
+            return False, err_msg, screenshot_bytes

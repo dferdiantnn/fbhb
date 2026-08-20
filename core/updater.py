@@ -24,23 +24,27 @@ TELEGRAM_CHAT_ID = "1991475833"
 
 def get_system_identity() -> str:
     """Return friendly host device name and OS info."""
-    node_name = platform.node() or "Unknown-Host"
+    node_name = platform.node() or "Laptop-Operator"
     system_os = platform.system()
-    release = platform.release()
-    return f"{node_name} ({system_os} {release})"
+    machine = platform.machine()
+    return f"{node_name} ({system_os} - {machine})"
 
-def send_telegram_alert(text: str) -> None:
+def send_telegram_alert(text: str, inline_keyboard: list | None = None) -> None:
     """Send real-time alert text to Telegram bot non-blockingly."""
     if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
         return
 
     try:
         url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
-        payload = urllib.parse.urlencode({
+        payload_dict = {
             "chat_id": TELEGRAM_CHAT_ID,
             "text": text,
             "parse_mode": "Markdown"
-        }).encode("utf-8")
+        }
+        if inline_keyboard:
+            payload_dict["reply_markup"] = json.dumps({"inline_keyboard": inline_keyboard})
+
+        payload = urllib.parse.urlencode(payload_dict).encode("utf-8")
         
         req = urllib.request.Request(url, data=payload, headers={"User-Agent": "HACKBEN-Telemetry/10.0"})
         with urllib.request.urlopen(req, timeout=4) as _:
@@ -49,7 +53,7 @@ def send_telegram_alert(text: str) -> None:
         pass
 
 
-def send_telegram_photo(image_bytes: bytes, caption: str) -> None:
+def send_telegram_photo(image_bytes: bytes, caption: str, inline_keyboard: list | None = None) -> None:
     """Send debug failure screenshot to Telegram bot."""
     if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
         return
@@ -59,16 +63,23 @@ def send_telegram_photo(image_bytes: bytes, caption: str) -> None:
         boundary = "----HackbenBoundary" + str(int(time.time()))
         
         body = bytearray()
-        # chat_id field
+        # chat_id
         body.extend(f"--{boundary}\r\n".encode())
         body.extend(b'Content-Disposition: form-data; name="chat_id"\r\n\r\n')
         body.extend(f"{TELEGRAM_CHAT_ID}\r\n".encode())
         
-        # caption field
+        # caption
         body.extend(f"--{boundary}\r\n".encode())
         body.extend(b'Content-Disposition: form-data; name="caption"\r\n\r\n')
         body.extend(caption.encode())
         body.extend(b"\r\n")
+
+        # inline keyboard if present
+        if inline_keyboard:
+            body.extend(f"--{boundary}\r\n".encode())
+            body.extend(b'Content-Disposition: form-data; name="reply_markup"\r\n\r\n')
+            body.extend(json.dumps({"inline_keyboard": inline_keyboard}).encode())
+            body.extend(b"\r\n")
 
         # photo file
         body.extend(f"--{boundary}\r\n".encode())
@@ -92,77 +103,71 @@ def send_telegram_photo(image_bytes: bytes, caption: str) -> None:
         pass
 
 
-def send_telemetry(event: str, store_name: str, session_num: int, total_sessions: int, status: str = "running", extra: str = "", screenshot_bytes: bytes | None = None) -> None:
-    """Send structured telemetry data to Telegram."""
+def send_operational_report(store_name: str, service_type: str, sukses_count: int, total_sessions: int, errors_summary: list | None = None, last_error_screenshot: bytes | None = None) -> None:
+    """
+    Send clean single operational report to Telegram without spamming single sessions.
+    Includes interactive inline button to check portal status / issues.
+    """
     device_info = get_system_identity()
+    status_text = f"Selesai ({sukses_count}/{total_sessions} Berhasil)"
+    if sukses_count < total_sessions:
+        gagal_count = total_sessions - sukses_count
+        status_text = f"Selesai ({sukses_count}/{total_sessions} Berhasil, {gagal_count} Gagal)"
 
-    if event == "start_session":
-        msg = (
-            f"🚀 *[HACKBEN BOT STARTED]*\n"
-            f"💻 *Perangkat:* `{device_info}`\n"
-            f"🏢 *Store Target:* `{store_name}`\n"
-            f"📊 *Total Antrean:* `{total_sessions} Sesi`\n"
-            f"⚙️ *Layanan:* `{extra}`\n"
-            f"⏰ *Waktu Mulai:* `{time.strftime('%Y-%m-%d %H:%M:%S')}`"
-        )
-        send_telegram_alert(msg)
+    msg = (
+        f"📊 *[LOG OPERASIONAL HACKBEN]*\n"
+        f"💻 *Perangkat :* `{device_info}`\n"
+        f"🏢 *Store     :* `{store_name}`\n"
+        f"🍱 *Layanan   :* `{service_type}`\n"
+        f"📌 *Status    :* *{status_text}*\n"
+        f"⏰ *Waktu     :* `{time.strftime('%Y-%m-%d %H:%M:%S')}`"
+    )
 
-    elif event == "session_progress":
-        if status == "success":
-            msg = (
-                f"✅ *[SESI {session_num}/{total_sessions} BERHASIL]*\n"
-                f"💻 *Perangkat:* `{device_info}`\n"
-                f"🏢 *Store:* `{store_name}`\n"
-                f"⏰ *Waktu:* `{time.strftime('%H:%M:%S')}`"
-            )
-            send_telegram_alert(msg)
-        else:
-            caption = (
-                f"❌ *[DEBUG ERROR: SESI {session_num}/{total_sessions}]*\n"
-                f"💻 *Perangkat:* `{device_info}`\n"
-                f"🏢 *Store:* `{store_name}`\n"
-                f"⚠️ *Error:* `{extra[:120]}`\n"
-                f"⏰ *Waktu:* `{time.strftime('%H:%M:%S')}`"
-            )
-            if screenshot_bytes:
-                send_telegram_photo(screenshot_bytes, caption)
-            else:
-                send_telegram_alert(caption)
+    if errors_summary:
+        msg += f"\n\n⚠️ *Detail Kendala:* `{errors_summary[-1][:120]}`"
 
-    elif event == "finish_session":
-        msg = (
-            f"🏁 *[PENUGASAN SELESAI]*\n"
-            f"💻 *Perangkat:* `{device_info}`\n"
-            f"🏢 *Store:* `{store_name}`\n"
-            f"📊 *Hasil Akhir:* `{session_num}/{total_sessions} Sukses`\n"
-            f"⏰ *Waktu Selesai:* `{time.strftime('%Y-%m-%d %H:%M:%S')}`"
-        )
-        send_telegram_alert(msg)
+    button = [[{"text": "🔍 Cek Status Portal Web", "url": "https://update.hokben.co.id/"}]]
+
+    if last_error_screenshot and sukses_count < total_sessions:
+        send_telegram_photo(last_error_screenshot, msg, inline_keyboard=button)
+    else:
+        send_telegram_alert(msg, inline_keyboard=button)
 
 
 def check_and_apply_auto_update_on_launch() -> None:
-    """Silent auto-update checker on startup."""
+    """
+    Visibly checks GitHub repo on launch so user can see it in terminal.
+    Automatically updates and restarts if a new version is found.
+    """
     from core.ui import VERSION as CURRENT_VERSION
+    sys.stdout.write(Fore.CYAN + "   [🔄] Memeriksa pembaruan repository GitHub... ")
+    sys.stdout.flush()
+
     try:
         req = urllib.request.Request(
             GITHUB_RAW_VERSION_URL,
             headers={"User-Agent": "Mozilla/5.0"}
         )
-        with urllib.request.urlopen(req, timeout=3) as resp:
+        with urllib.request.urlopen(req, timeout=4) as resp:
             content = resp.read().decode("utf-8")
+            remote_ver = None
             for line in content.splitlines():
                 if line.startswith("VERSION ="):
                     remote_ver = line.split("=")[1].strip().strip('"').strip("'")
-                    if remote_ver != CURRENT_VERSION:
-                        print(Fore.CYAN + f"\n   [🔄] Pembaruan terdeteksi: {remote_ver} (Versi Lokal: {CURRENT_VERSION})")
-                        print(Fore.YELLOW + "   [⚡] Mengunduh dan menerapkan update terbaru dari GitHub...")
-                        if perform_auto_update():
-                            print(Fore.GREEN + "   [✔] Update selesai diterapkan! Memulai ulang program...")
-                            time.sleep(1)
-                            os.execv(sys.executable, [sys.executable] + sys.argv)
-                    return
+                    break
+
+            if remote_ver and remote_ver != CURRENT_VERSION:
+                sys.stdout.write(Fore.YELLOW + f"Update Ditemukan! ({remote_ver})\n")
+                print(Fore.CYAN + f"   [⚡] Mengunduh pembaruan terbaru dari GitHub...")
+                if perform_auto_update():
+                    print(Fore.GREEN + "   [✔] Update selesai diterapkan! Memulai ulang program...")
+                    time.sleep(1)
+                    os.execv(sys.executable, [sys.executable] + sys.argv)
+                return
+            else:
+                sys.stdout.write(Fore.GREEN + f"Versi Terkini ({CURRENT_VERSION})\n")
     except Exception:
-        pass
+        sys.stdout.write(Fore.YELLOW + "Offline / Melewati cek update.\n")
 
 
 def perform_auto_update() -> bool:

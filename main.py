@@ -197,15 +197,14 @@ class HackbenApp:
             print(Fore.CYAN + "=" * 65 + "\n")
             time.sleep(1.5)
 
-            # Telemetry Start Event
-            send_telemetry("start_session", target_store_name, 0, total_sessions, status="started", extra=f"service={service_type}")
-
             spinner = Spinner()
             sukses_count = 0
+            errors_list = []
+            last_error_screenshot = None
 
             for i in range(1, total_sessions + 1):
                 print(Fore.YELLOW + f"   ▶ Menjalankan Sesi #{i} dari {total_sessions}:")
-                ok = execute_feedback_session(
+                ok, err_msg, screenshot_bytes = execute_feedback_session(
                     session_num=i,
                     total_sessions=total_sessions,
                     target_store=target_store_name,
@@ -216,17 +215,27 @@ class HackbenApp:
                 )
                 if ok:
                     sukses_count += 1
-                    send_telemetry("session_progress", target_store_name, i, total_sessions, status="success")
                 else:
-                    send_telemetry("session_progress", target_store_name, i, total_sessions, status="failed")
+                    if err_msg:
+                        errors_list.append(err_msg)
+                    if screenshot_bytes:
+                        last_error_screenshot = screenshot_bytes
 
                 if i < total_sessions:
                     print(Fore.CYAN + "   ⏳ Jeda 3 detik antar sesi untuk stabilisasi...")
                     time.sleep(3)
                     print("")
 
-            # Telemetry Finish Event
-            send_telemetry("finish_session", target_store_name, sukses_count, total_sessions, status="completed")
+            # Send single clean Operational Report to Telegram
+            from core.updater import send_operational_report
+            send_operational_report(
+                store_name=target_store_name,
+                service_type=service_type,
+                sukses_count=sukses_count,
+                total_sessions=total_sessions,
+                errors_summary=errors_list,
+                last_error_screenshot=last_error_screenshot
+            )
 
             print(Fore.GREEN + "\n" + "=" * 65)
             print(Fore.YELLOW + Style.BRIGHT + f"   🎉 MISSION COMPLETED: {sukses_count}/{total_sessions} Sesi Berhasil!")
