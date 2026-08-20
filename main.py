@@ -187,9 +187,9 @@ class HackbenApp:
                 print("   0. 🚪 Keluar")
                 print("")
 
-                pilihan = input(Fore.YELLOW + "   ?> Masukkan pilihan (0-5): " + Fore.RESET).strip()
+                pilihan = input(Fore.YELLOW + "   ?> Masukkan pilihan (0-5) [Enter = 1 (Mulai)]: " + Fore.RESET).strip()
 
-                if pilihan == "1":
+                if pilihan == "1" or not pilihan:
                     self.start_bot()
                 elif pilihan == "2":
                     show_user_guide()
