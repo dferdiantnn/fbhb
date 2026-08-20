@@ -43,15 +43,26 @@ def answer_question_smartly(q_element) -> None:
     5. Gender -> Randomly chooses Pria / Wanita
     6. Other questions -> Randomly chooses exactly 1 valid option
     """
-    text_content = q_element.inner_text().lower()
+    # Rule 1: Sesuai / Sudah Sesuai -> Always SESUAI
+    sesuai_inputs = q_element.locator("label:has-text('Sudah Sesuai') input, label:has-text('Sesuai') input, input[value*='Sesuai' i]")
+    if sesuai_inputs.count() > 0:
+        sesuai_inputs.first.click(force=True)
+        return
 
-    # Rule 1: Ya / Tidak questions -> Always YA
+    # Special Question: Roti menyusut / kempes -> Pilih Tidak (jika tidak ada opsi Sesuai)
+    if "roti" in text_content or "kempes" in text_content or "menyusut" in text_content:
+        tidak_inputs = q_element.locator("label:has-text('Tidak') input, input[value*='Tidak' i]")
+        if tidak_inputs.count() > 0:
+            tidak_inputs.first.click(force=True)
+            return
+
+    # Rule 2: Ya / Tidak questions -> Always YA
     ya_inputs = q_element.locator("label:has-text('Ya') input, input[value*='Ya' i], input[value='1']")
     if "ya" in text_content and ya_inputs.count() > 0:
         ya_inputs.first.click(force=True)
         return
 
-    # Rule 2: Kepuasan -> Always SANGAT PUAS
+    # Rule 3: Kepuasan -> Always SANGAT PUAS
     sangat_puas_inputs = q_element.locator("label:has-text('Sangat Puas') input, label:has-text('Sangat Baik') input")
     if sangat_puas_inputs.count() > 0:
         sangat_puas_inputs.first.click(force=True)
