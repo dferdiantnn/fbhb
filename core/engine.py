@@ -1,6 +1,6 @@
 """
 Playwright Automation Engine for HACKBEN.
-Features smart dynamic waits, headless background operation, step progress updates,
+Features smart dynamic waits, human-like intelligent randomization,
 and automated debug screenshots on failure.
 """
 
@@ -31,6 +31,60 @@ def ensure_playwright_installed():
     except Exception as e:
         print(Fore.RED + f"   ❌ Gagal inisialisasi browser Playwright: {e}")
         sys.exit(1)
+
+
+def answer_question_smartly(q_element) -> None:
+    """
+    Intelligently answers a question fieldset:
+    1. Ya / Tidak -> Always chooses 'Ya'
+    2. Sangat Puas / Puas -> Always chooses 'Sangat Puas'
+    3. Usia -> Randomly chooses options above 13 years (skips < 13 Tahun)
+    4. Range Harga -> Randomly chooses options > Rp 25.000 (skips < Rp 25.000)
+    5. Gender -> Randomly chooses Pria / Wanita
+    6. Other questions -> Randomly chooses exactly 1 valid option
+    """
+    text_content = q_element.inner_text().lower()
+
+    # Rule 1: Ya / Tidak questions -> Always YA
+    ya_inputs = q_element.locator("label:has-text('Ya') input, input[value*='Ya' i], input[value='1']")
+    if "ya" in text_content and ya_inputs.count() > 0:
+        ya_inputs.first.click(force=True)
+        return
+
+    # Rule 2: Kepuasan -> Always SANGAT PUAS
+    sangat_puas_inputs = q_element.locator("label:has-text('Sangat Puas') input, label:has-text('Sangat Baik') input")
+    if sangat_puas_inputs.count() > 0:
+        sangat_puas_inputs.first.click(force=True)
+        return
+
+    # Rule 3: Usia -> Random above 13 years
+    if "usia" in text_content or "umur" in text_content:
+        valid_age_labels = q_element.locator("label:not(:has-text('<13')):not(:has-text('< 13')) input")
+        if valid_age_labels.count() > 0:
+            idx = random.randint(0, valid_age_labels.count() - 1)
+            valid_age_labels.nth(idx).click(force=True)
+            return
+
+    # Rule 4: Range Harga -> Random above 25.000
+    if "harga" in text_content or "range" in text_content or "pembelian" in text_content:
+        valid_price_labels = q_element.locator("label:not(:has-text('< Rp 25.000')):not(:has-text('< 25.000')):not(:has-text('<Rp 25.000')) input")
+        if valid_price_labels.count() > 0:
+            idx = random.randint(0, valid_price_labels.count() - 1)
+            valid_price_labels.nth(idx).click(force=True)
+            return
+
+    # Rule 5: Gender (Pria / Wanita) & Other general questions -> Random 1 choice
+    all_radios = q_element.locator("input[type='radio']")
+    if all_radios.count() > 0:
+        idx = random.randint(0, all_radios.count() - 1)
+        all_radios.nth(idx).click(force=True)
+        return
+
+    # Fallback checkboxes (pick exactly 1 random)
+    all_checkboxes = q_element.locator("input[type='checkbox']")
+    if all_checkboxes.count() > 0:
+        idx = random.randint(0, all_checkboxes.count() - 1)
+        all_checkboxes.nth(idx).click(force=True)
 
 
 def execute_feedback_session(
@@ -116,34 +170,56 @@ def execute_feedback_session(
             except PlaywrightTimeoutError:
                 page.keyboard.press("Enter")
 
-            # Step 4: Service Type Selection
-            svc_name = "Dine In (Makan di Tempat)" if service_type == "DINE IN" else "Take Away (Bawa Pulang)"
+            # Step 4: Service Type Selection (Dine In / Take Away / Survey)
+            if service_type == "DINE IN":
+                svc_name = "Dine In (Makan di Tempat)"
+                link_id = 2
+            elif service_type == "SURVEY":
+                svc_name = "Survey Khusus"
+                link_id = 1
+            else:
+                svc_name = "Take Away (Bawa Pulang)"
+                link_id = 3
+
             prefix, msg = print_step(4, TOTAL_STEPS, f"Memilih Layanan: {svc_name}...")
             spinner.update(msg, prefix=prefix)
             
             time.sleep(1.0)
-            link_id = 2 if service_type == "DINE IN" else 3
             page.evaluate(f"try {{ linkTo({link_id}) }} catch(e) {{ console.log(e) }}")
 
-            # Step 5: Fill Questionnaire
-            prefix, msg = print_step(5, TOTAL_STEPS, "Mengisi Kuesioner (Mode Sangat Puas / Positif)...")
+            # Step 5: Fill Questionnaire with Multi-Step Next Handler & Smart Randomizer
+            prefix, msg = print_step(5, TOTAL_STEPS, "Mengisi Kuesioner (Mode Smart Randomizer & Sangat Puas)...")
             spinner.update(msg, prefix=prefix)
             
-            page.wait_for_selector("fieldset", state="visible", timeout=30000)
-            question_sets = page.locator("fieldset:visible")
-            total_questions = question_sets.count()
-
-            for i in range(total_questions):
-                q = question_sets.nth(i)
-                q.scroll_into_view_if_needed()
+            page.wait_for_selector("fieldset, form", state="visible", timeout=30000)
+            
+            # Loop through wizard steps if pagination/Next button exists
+            max_loops = 25
+            loop_cnt = 0
+            while loop_cnt < max_loops:
+                loop_cnt += 1
                 
-                positive_target = q.locator("label:has-text('Ya') input, label:has-text('Sangat Puas') input, label:has-text('Puas') input")
-                radio_inputs = q.locator("input[type='radio']")
+                # Check visible fieldsets on current view
+                visible_fieldsets = page.locator("fieldset:visible")
+                f_count = visible_fieldsets.count()
+                
+                for i in range(f_count):
+                    q = visible_fieldsets.nth(i)
+                    q.scroll_into_view_if_needed()
+                    answer_question_smartly(q)
 
-                if positive_target.count() > 0:
-                    positive_target.first.click(force=True)
-                elif radio_inputs.count() > 0:
-                    radio_inputs.first.click(force=True)
+                # Check if there is a 'Next' button visible
+                next_btn = page.locator("input[value='Next']:visible, button:has-text('Next'):visible, a.next:visible, .next:visible")
+                submit_btn = page.locator("input[type='submit']:visible, button:has-text('Kirim'):visible, button:has-text('Submit'):visible, input[value='Kirim']:visible")
+
+                if submit_btn.count() > 0:
+                    # Submit stage reached
+                    break
+                elif next_btn.count() > 0:
+                    next_btn.first.click(force=True)
+                    time.sleep(0.3)
+                else:
+                    break
 
             # Step 6: Submit Feedback
             prefix, msg = print_step(6, TOTAL_STEPS, "Mengirim Formulir Feedback...")
