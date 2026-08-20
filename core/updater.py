@@ -132,8 +132,13 @@ def check_and_apply_auto_update_on_launch() -> None:
             remote_hash = subprocess.check_output(["git", "rev-parse", "origin/main"]).decode().strip()
             
             if local_hash != remote_hash:
-                sys.stdout.write(Fore.YELLOW + "Pembaruan Ditemukan!\n")
-                print(Fore.CYAN + "   [⚡] Mengunduh pembaruan terbaru dari GitHub...")
+                commit_msg = "Pembaruan sistem"
+                try:
+                    commit_msg = subprocess.check_output(["git", "log", "-1", "--pretty=%s", "origin/main"]).decode().strip()
+                except Exception:
+                    pass
+                sys.stdout.write(Fore.YELLOW + f"Pembaruan Ditemukan! ({commit_msg})\n")
+                print(Fore.CYAN + "   [⚡] Mengunduh dan menerapkan file terbaru dari GitHub...")
                 if perform_auto_update():
                     print(Fore.GREEN + "   [✔] Update selesai diterapkan! Memulai ulang program...")
                     time.sleep(1)
