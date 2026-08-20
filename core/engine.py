@@ -165,7 +165,10 @@ def execute_feedback_session(
                 locale="id-ID",
                 timezone_id="Asia/Jakarta"
             )
-            context.set_default_timeout(45000)
+            context.set_default_timeout(30000)
+
+            # Speed optimization: abort unneeded heavy media and fonts
+            context.route("**/*.{png,jpg,jpeg,gif,webp,svg,woff,woff2,ttf,ico}", lambda route: route.abort())
 
             context.add_init_script("""
                 Object.defineProperty(navigator, 'webdriver', {get: () => undefined});
@@ -177,19 +180,19 @@ def execute_feedback_session(
             # Step 2: Open Target URL
             prefix, msg = print_step(2, TOTAL_STEPS, f"Membuka portal feedback ({device['name'][:24]})...")
             spinner.update(msg, prefix=prefix)
-            page.goto("https://update.hokben.co.id/", wait_until="domcontentloaded", timeout=45000)
+            page.goto("https://update.hokben.co.id/", wait_until="domcontentloaded", timeout=30000)
 
             # Step 3: Login Store Search
             prefix, msg = print_step(3, TOTAL_STEPS, f"Memilih Store: {target_store}...")
             spinner.update(msg, prefix=prefix)
             
             search_input = page.locator("input[placeholder='Cari Store ...']")
-            search_input.wait_for(state="visible", timeout=30000)
+            search_input.wait_for(state="visible", timeout=20000)
             search_input.fill(target_store)
             
             store_option = page.locator(f"//a[contains(text(), '{target_store}')]")
             try:
-                store_option.first.wait_for(state="visible", timeout=5000)
+                store_option.first.wait_for(state="visible", timeout=4000)
                 store_option.first.click()
             except PlaywrightTimeoutError:
                 page.keyboard.press("Enter")
@@ -208,42 +211,21 @@ def execute_feedback_session(
             prefix, msg = print_step(4, TOTAL_STEPS, f"Memilih Layanan: {svc_name}...")
             spinner.update(msg, prefix=prefix)
             
-            time.sleep(1.0)
+            time.sleep(0.5)
             page.evaluate(f"try {{ linkTo({link_id}) }} catch(e) {{ console.log(e) }}")
 
-            # Step 5: Fill Questionnaire with Multi-Step Next Handler & Smart Randomizer
-            prefix, msg = print_step(5, TOTAL_STEPS, "Mengisi Kuesioner (Mode Smart Randomizer & Sangat Puas)...")
+            # Step 5: Fill Questionnaire with Smart Randomizer & Lightning DOM Evaluation
+            prefix, msg = print_step(5, TOTAL_STEPS, "Mengisi Kuesioner (Mode Ultra-Fast Smart Randomizer)...")
             spinner.update(msg, prefix=prefix)
             
-            page.wait_for_selector("fieldset, form", state="visible", timeout=30000)
+            page.wait_for_selector("fieldset, form", state="visible", timeout=20000)
             
-            # Loop through wizard steps if pagination/Next button exists
-            max_loops = 25
-            loop_cnt = 0
-            while loop_cnt < max_loops:
-                loop_cnt += 1
-                
-                # Check visible fieldsets on current view
-                visible_fieldsets = page.locator("fieldset:visible")
-                f_count = visible_fieldsets.count()
-                
-                for i in range(f_count):
-                    q = visible_fieldsets.nth(i)
-                    q.scroll_into_view_if_needed()
-                    answer_question_smartly(q)
-
-                # Check if there is a 'Next' button visible
-                next_btn = page.locator("input[value='Next']:visible, button:has-text('Next'):visible, a.next:visible, .next:visible")
-                submit_btn = page.locator("input[type='submit']:visible, button:has-text('Kirim'):visible, button:has-text('Submit'):visible, input[value='Kirim']:visible")
-
-                if submit_btn.count() > 0:
-                    # Submit stage reached
-                    break
-                elif next_btn.count() > 0:
-                    next_btn.first.click(force=True)
-                    time.sleep(0.3)
-                else:
-                    break
+            # Fast batch evaluation across all fieldsets
+            all_fieldsets = page.locator("fieldset")
+            f_count = all_fieldsets.count()
+            for i in range(f_count):
+                q = all_fieldsets.nth(i)
+                answer_question_smartly(q)
 
             # Step 6: Submit Feedback
             prefix, msg = print_step(6, TOTAL_STEPS, "Mengirim Formulir Feedback...")
