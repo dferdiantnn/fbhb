@@ -175,8 +175,8 @@ def execute_feedback_session(
                 svc_name = "Dine In (Makan di Tempat)"
                 link_id = 2
             elif service_type == "SURVEY":
-                svc_name = "Survey Khusus"
-                link_id = 1
+                svc_name = "Survey Menu Khusus (Katsu Sando)"
+                link_id = 4
             else:
                 svc_name = "Take Away (Bawa Pulang)"
                 link_id = 3
