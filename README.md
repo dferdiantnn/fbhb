@@ -1,5 +1,5 @@
 # ⚡ HACKBEN - Universal Next-Gen Automation Suite
-`Versi: v10.9.8 (Latest Release)`
+`Versi: v10.9.9 (Latest Release)`
 
 > *High-Performance, Zero-Latency, Cross-Platform Feedback Automation Engine powered by Playwright Async & Dynamic Context Emulation.*
 

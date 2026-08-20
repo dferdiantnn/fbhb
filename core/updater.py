@@ -23,38 +23,45 @@ TELEGRAM_BOT_TOKEN = base64.b64decode(_ENC_TOKEN).decode("utf-8")
 TELEGRAM_CHAT_ID = "1991475833"
 
 def get_system_identity() -> str:
-    """Return friendly exact host device name, series, and OS info."""
+    """Return friendly exact computer name + host hardware model + OS info."""
+    node_name = platform.node() or os.getenv("COMPUTERNAME") or os.getenv("USERNAME") or "Unit"
     system_os = platform.system()
     machine = platform.machine()
     
+    dev_type = ""
     if system_os == "Darwin":
         try:
             model = subprocess.check_output(["sysctl", "-n", "hw.model"]).decode().strip()
             chip = subprocess.check_output(["sysctl", "-n", "machdep.cpu.brand_string"]).decode().strip()
             if "MacBookAir" in model:
-                return f"MacBook Air ({chip})"
+                dev_type = f"MacBook Air ({chip})"
             elif "MacBookPro" in model:
-                return f"MacBook Pro ({chip})"
+                dev_type = f"MacBook Pro ({chip})"
             elif "Macmini" in model:
-                return f"Mac mini ({chip})"
+                dev_type = f"Mac mini ({chip})"
             elif "iMac" in model:
-                return f"iMac ({chip})"
-            return f"Mac ({chip})"
+                dev_type = f"iMac ({chip})"
+            else:
+                dev_type = f"Mac ({chip})"
         except Exception:
-            return "MacBook (Apple Silicon)"
+            dev_type = "MacBook (Apple Silicon)"
     elif system_os == "Windows":
         try:
             # Query exact OEM brand and model from Windows WMI
             cmd = 'powershell -NoProfile -Command "(Get-CimInstance Win32_ComputerSystem).Manufacturer + \' \' + (Get-CimInstance Win32_ComputerSystem).Model"'
             out = subprocess.check_output(cmd, shell=True, timeout=3).decode().strip()
             if out and len(out) > 2:
-                return f"{out} (Windows)"
-            return f"Windows PC ({platform.processor() or machine})"
+                dev_type = f"{out} (Windows)"
+            else:
+                dev_type = f"Windows PC ({platform.processor() or machine})"
         except Exception:
-            return f"Windows PC ({machine})"
+            dev_type = f"Windows PC ({machine})"
     elif system_os == "Linux":
-        return f"Linux Workstation ({machine})"
-    return f"{system_os} ({machine})"
+        dev_type = f"Linux Workstation ({machine})"
+    else:
+        dev_type = f"{system_os} ({machine})"
+        
+    return f"{node_name} - {dev_type}"
 
 def send_telegram_alert(text: str, inline_keyboard: list | None = None) -> bool:
     """Send real-time alert text to Telegram bot reliably with plain text fallback."""
