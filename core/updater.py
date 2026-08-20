@@ -125,11 +125,35 @@ def check_and_apply_auto_update_on_launch() -> None:
     sys.stdout.flush()
 
     try:
+        if os.path.exists(".git"):
+            # Check using Git remote tracking directly (100% accurate, zero CDN caching)
+            subprocess.run(["git", "fetch", "origin", "main"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=8)
+            local_hash = subprocess.check_output(["git", "rev-parse", "HEAD"]).decode().strip()
+            remote_hash = subprocess.check_output(["git", "rev-parse", "origin/main"]).decode().strip()
+            
+            if local_hash != remote_hash:
+                sys.stdout.write(Fore.YELLOW + "Pembaruan Ditemukan!\n")
+                print(Fore.CYAN + "   [⚡] Mengunduh pembaruan terbaru dari GitHub...")
+                if perform_auto_update():
+                    print(Fore.GREEN + "   [✔] Update selesai diterapkan! Memulai ulang program...")
+                    time.sleep(1)
+                    os.execv(sys.executable, [sys.executable] + sys.argv)
+                return
+            else:
+                sys.stdout.write(Fore.GREEN + f"Versi Terkini ({CURRENT_VERSION})\n")
+                return
+
+        # Fallback for non-git zip standalone setups with cache-busting timestamp
+        cache_buster_url = f"{GITHUB_RAW_VERSION_URL}?nocache={int(time.time())}"
         req = urllib.request.Request(
-            GITHUB_RAW_VERSION_URL,
-            headers={"User-Agent": "Mozilla/5.0"}
+            cache_buster_url,
+            headers={
+                "User-Agent": "Mozilla/5.0",
+                "Cache-Control": "no-cache, no-store, must-revalidate",
+                "Pragma": "no-cache"
+            }
         )
-        with urllib.request.urlopen(req, timeout=4) as resp:
+        with urllib.request.urlopen(req, timeout=5) as resp:
             content = resp.read().decode("utf-8")
             remote_ver = None
             for line in content.splitlines():
@@ -139,7 +163,7 @@ def check_and_apply_auto_update_on_launch() -> None:
 
             if remote_ver and remote_ver != CURRENT_VERSION:
                 sys.stdout.write(Fore.YELLOW + f"Update Ditemukan! ({remote_ver})\n")
-                print(Fore.CYAN + f"   [⚡] Mengunduh pembaruan terbaru dari GitHub...")
+                print(Fore.CYAN + "   [⚡] Mengunduh pembaruan terbaru dari GitHub...")
                 if perform_auto_update():
                     print(Fore.GREEN + "   [✔] Update selesai diterapkan! Memulai ulang program...")
                     time.sleep(1)
