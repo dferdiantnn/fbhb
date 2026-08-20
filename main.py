@@ -12,6 +12,7 @@ from core.ui import print_banner, Spinner, VERSION
 from core.network import clean_system_processes, get_public_ip, get_current_os
 from core.engine import ensure_playwright_installed, execute_feedback_session
 from core.builder import menu_build_app
+from core.guide import show_user_guide
 from core.updater import check_and_apply_auto_update_on_launch, send_telemetry
 from data.stores import STORE_DB, get_store_name, search_stores
 from data.devices import get_device_count
@@ -179,25 +180,28 @@ class HackbenApp:
                 print_banner(headless=self.headless)
                 print(Fore.GREEN + "   [ MENU UTAMA DASHBOARD ]")
                 print("   1. 🚀 Mulai Kirim Feedback Otomatis")
-                print("   2. 👁️  Pengaturan Tampilan (Headless Background / Visual)")
-                print("   3. 🌐 Pengaturan Jaringan & Proxy")
-                print("   4. 🛠️  Jadikan Aplikasi (Build Standalone .exe / dll)")
+                print("   2. 📖 Petunjuk Penggunaan (Panduan Lengkap & Ramah)")
+                print("   3. 👁️  Pengaturan Tampilan (Headless Background / Visual)")
+                print("   4. 🌐 Pengaturan Jaringan & Proxy")
+                print("   5. 🛠️  Jadikan Aplikasi (Build Standalone .exe / dll)")
                 print("   0. 🚪 Keluar")
                 print("")
 
-                pilihan = input(Fore.YELLOW + "   ?> Masukkan pilihan (0-4): " + Fore.RESET).strip()
+                pilihan = input(Fore.YELLOW + "   ?> Masukkan pilihan (0-5): " + Fore.RESET).strip()
 
                 if pilihan == "1":
                     self.start_bot()
                 elif pilihan == "2":
-                    self.menu_display_settings()
+                    show_user_guide()
                 elif pilihan == "3":
-                    self.menu_network_settings()
+                    self.menu_display_settings()
                 elif pilihan == "4":
+                    self.menu_network_settings()
+                elif pilihan == "5":
                     menu_build_app()
                 elif pilihan == "0":
                     clean_system_processes()
-                    print(Fore.CYAN + "\n   Sampai jumpa! Stay safe & keep coding. 🚀\n")
+                    print(Fore.CYAN + "\n   Sampai jumpa! Tetap semangat ya Kak. ✨\n")
                     break
                 else:
                     continue
