@@ -66,15 +66,15 @@ def print_banner(store_name: str | None = None, mode: str | None = None, headles
    ██╔══██║██╔══██║██║     ██╔═██╗ ██╔══██╗██╔══╝  ██║╚██╗██║
    ██║  ██║██║  ██║╚██████╗██║ ╚██╗██████╔╝███████╗██║ ╚████║
    ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚═════╝ ╚══════╝╚═╝  ╚═══╝
-    """ + Fore.YELLOW + "  ⚡ Universal Cross-Platform Automation Suite by Ferr ⚡")
-    print(Fore.CYAN + "=" * 60)
+    """ + Fore.YELLOW + "    ⚡ Universal Cross-Platform Automation Suite by Ferr ⚡")
+    print(Fore.CYAN + "=" * 61)
     print(Fore.WHITE + f"   📦 Versi     : {VERSION}")
     if store_name:
         print(Fore.WHITE + f"   🎯 Target    : {store_name}")
     if mode:
         print(Fore.WHITE + f"   🌐 Jaringan  : {mode}")
     print(Fore.WHITE + f"   👁️  Tampilan  : {'Background (Headless)' if headless else 'Visual Window'}")
-    print(Fore.CYAN + "=" * 65 + "\n")
+    print(Fore.CYAN + "=" * 61 + "\n")
 
 
 def print_step(step_curr: int, step_total: int, text: str, status: str = "running"):
