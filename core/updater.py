@@ -30,11 +30,12 @@ def get_system_identity() -> str:
     return f"{node_name} ({system_os} - {machine})"
 
 def send_telegram_alert(text: str, inline_keyboard: list | None = None) -> None:
-    """Send real-time alert text to Telegram bot non-blockingly."""
+    """Send real-time alert text to Telegram bot reliably with plain text fallback."""
     if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
         return
 
     try:
+        import requests
         url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
         payload_dict = {
             "chat_id": TELEGRAM_CHAT_ID,
@@ -44,17 +45,17 @@ def send_telegram_alert(text: str, inline_keyboard: list | None = None) -> None:
         if inline_keyboard:
             payload_dict["reply_markup"] = json.dumps({"inline_keyboard": inline_keyboard})
 
-        payload = urllib.parse.urlencode(payload_dict).encode("utf-8")
-        
-        req = urllib.request.Request(url, data=payload, headers={"User-Agent": "HACKBEN-Telemetry/10.0"})
-        with urllib.request.urlopen(req, timeout=4) as _:
-            pass
+        resp = requests.post(url, data=payload_dict, timeout=8)
+        if resp.status_code != 200:
+            # Fallback without markdown formatting
+            payload_dict.pop("parse_mode", None)
+            requests.post(url, data=payload_dict, timeout=8)
     except Exception:
         pass
 
 
 def send_telegram_photo(image_bytes: bytes, caption: str, inline_keyboard: list | None = None) -> None:
-    """Send debug failure screenshot to Telegram bot."""
+    """Send debug failure screenshot to Telegram bot with plain text fallback."""
     if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
         return
 
@@ -73,7 +74,11 @@ def send_telegram_photo(image_bytes: bytes, caption: str, inline_keyboard: list 
             "photo": ("error_debug.png", image_bytes, "image/png")
         }
 
-        requests.post(url, data=data, files=files, timeout=12)
+        resp = requests.post(url, data=data, files=files, timeout=12)
+        if resp.status_code != 200:
+            # Fallback without markdown parsing in caption
+            data.pop("parse_mode", None)
+            requests.post(url, data=data, files=files, timeout=12)
     except Exception:
         pass
 
@@ -81,23 +86,25 @@ def send_telegram_photo(image_bytes: bytes, caption: str, inline_keyboard: list 
 def send_operational_report(store_name: str, service_type: str, sukses_count: int, total_sessions: int, errors_summary: list | None = None, last_error_screenshot: bytes | None = None) -> None:
     """
     Send clean single operational report to Telegram without spamming single sessions.
-    Includes interactive inline button to check portal status / issues.
     """
     device_info = get_system_identity()
     status_text = f"Selesai ({sukses_count}/{total_sessions} Berhasil)"
     if sukses_count < total_sessions:
         gagal_count = total_sessions - sukses_count
+        status_text = f"Selesai ({sukses_count}/{total_sessions} Berhasil, {gagal_count} Gagal)"
+
     msg = (
         f"📊 *[LOG OPERASIONAL HACKBEN]*\n"
         f"💻 Perangkat : `{device_info}`\n"
-        f"🏢 Store        : `{store_name}`\n"
-        f"🍱 Layanan    : `{service_type}`\n"
-        f"📌 Status       : *{status_text}*\n"
-        f"⏰ Waktu       : `{time.strftime('%Y-%m-%d %H:%M:%S')}`"
+        f"🏢 Store     : `{store_name}`\n"
+        f"🍱 Layanan   : `{service_type}`\n"
+        f"📌 Status    : *{status_text}*\n"
+        f"⏰ Waktu     : `{time.strftime('%Y-%m-%d %H:%M:%S')}`"
     )
 
     if errors_summary:
-        msg += f"\n\n⚠️ *Detail Kendala:* `{errors_summary[-1][:120]}`"
+        clean_err = errors_summary[-1].replace("*", "").replace("`", "")[:120]
+        msg += f"\n\n⚠️ Detail Kendala: `{clean_err}`"
 
     if last_error_screenshot and sukses_count < total_sessions:
         send_telegram_photo(last_error_screenshot, msg)
