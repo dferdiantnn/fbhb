@@ -24,10 +24,18 @@ TELEGRAM_CHAT_ID = "1991475833"
 
 def get_system_identity() -> str:
     """Return friendly host device name and OS info."""
-    node_name = platform.node() or "Laptop-Operator"
     system_os = platform.system()
     machine = platform.machine()
-    return f"{node_name} ({system_os} - {machine})"
+    
+    if system_os == "Darwin":
+        if "arm" in machine.lower():
+            return "MacBook (Apple Silicon - macOS)"
+        return "MacBook (Intel - macOS)"
+    elif system_os == "Windows":
+        return f"Windows PC ({machine})"
+    elif system_os == "Linux":
+        return f"Linux Workstation ({machine})"
+    return f"{system_os} ({machine})"
 
 def send_telegram_alert(text: str, inline_keyboard: list | None = None) -> None:
     """Send real-time alert text to Telegram bot reliably with plain text fallback."""
