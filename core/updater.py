@@ -59,46 +59,21 @@ def send_telegram_photo(image_bytes: bytes, caption: str, inline_keyboard: list 
         return
 
     try:
+        import requests
         url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendPhoto"
-        boundary = "----HackbenBoundary" + str(int(time.time()))
-        
-        body = bytearray()
-        # chat_id
-        body.extend(f"--{boundary}\r\n".encode())
-        body.extend(b'Content-Disposition: form-data; name="chat_id"\r\n\r\n')
-        body.extend(f"{TELEGRAM_CHAT_ID}\r\n".encode())
-        
-        # caption
-        body.extend(f"--{boundary}\r\n".encode())
-        body.extend(b'Content-Disposition: form-data; name="caption"\r\n\r\n')
-        body.extend(caption.encode())
-        body.extend(b"\r\n")
-
-        # inline keyboard if present
+        data = {
+            "chat_id": TELEGRAM_CHAT_ID,
+            "caption": caption,
+            "parse_mode": "Markdown"
+        }
         if inline_keyboard:
-            body.extend(f"--{boundary}\r\n".encode())
-            body.extend(b'Content-Disposition: form-data; name="reply_markup"\r\n\r\n')
-            body.extend(json.dumps({"inline_keyboard": inline_keyboard}).encode())
-            body.extend(b"\r\n")
+            data["reply_markup"] = json.dumps({"inline_keyboard": inline_keyboard})
 
-        # photo file
-        body.extend(f"--{boundary}\r\n".encode())
-        body.extend(b'Content-Disposition: form-data; name="photo"; filename="error_debug.png"\r\n')
-        body.extend(b"Content-Type: image/png\r\n\r\n")
-        body.extend(image_bytes)
-        body.extend(b"\r\n")
-        body.extend(f"--{boundary}--\r\n".encode())
+        files = {
+            "photo": ("error_debug.png", image_bytes, "image/png")
+        }
 
-        req = urllib.request.Request(
-            url,
-            data=body,
-            headers={
-                "Content-Type": f"multipart/form-data; boundary={boundary}",
-                "User-Agent": "HACKBEN-Telemetry/10.0"
-            }
-        )
-        with urllib.request.urlopen(req, timeout=10) as _:
-            pass
+        requests.post(url, data=data, files=files, timeout=12)
     except Exception:
         pass
 

@@ -36,12 +36,15 @@ def answer_question_smartly(q_element) -> None:
     """
     Intelligently answers a question fieldset:
     1. Ya / Tidak -> Always chooses 'Ya'
-    2. Sangat Puas / Puas -> Always chooses 'Sangat Puas'
-    3. Usia -> Randomly chooses options above 13 years (skips < 13 Tahun)
-    4. Range Harga -> Randomly chooses options > Rp 25.000 (skips < Rp 25.000)
-    5. Gender -> Randomly chooses Pria / Wanita
-    6. Other questions -> Randomly chooses exactly 1 valid option
+    2. Sesuai / Sudah Sesuai -> Always chooses 'Sesuai'
+    3. Sangat Puas / Puas -> Always chooses 'Sangat Puas'
+    4. Usia -> Randomly chooses options above 13 years (skips < 13 Tahun)
+    5. Range Harga -> Randomly chooses options > Rp 25.000 (skips < Rp 25.000)
+    6. Gender -> Randomly chooses Pria / Wanita
+    7. Other questions -> Randomly chooses exactly 1 valid option
     """
+    text_content = q_element.inner_text().lower()
+
     # Rule 1: Sesuai / Sudah Sesuai -> Always SESUAI
     sesuai_inputs = q_element.locator("label:has-text('Sudah Sesuai') input, label:has-text('Sesuai') input, input[value*='Sesuai' i]")
     if sesuai_inputs.count() > 0:
