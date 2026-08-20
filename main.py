@@ -159,22 +159,39 @@ class HackbenApp:
                 continue
 
             # 2. Pilih Layanan
+            is_kitchen = "KITCHEN" in target_store_name.upper()
             print(Fore.GREEN + "\n   [ PILIH METODE LAYANAN ]")
-            print(Fore.WHITE + "   1. Dine In (Makan di Tempat)")
-            print(Fore.WHITE + "   2. Take Away (Bawa Pulang)")
-            print(Fore.WHITE + "   3. Survey Khusus")
-            print(Fore.MAGENTA + "   0. ↩️  Kembali ke Menu Utama")
             
-            service_type = "TAKE AWAY"
-            p_layanan = input(Fore.YELLOW + "   ?> Pilihan (1/2/3/0) [Enter = 2]: " + Fore.RESET).strip()
-            if p_layanan == "0" or p_layanan.lower() == "kembali":
-                return
-            elif p_layanan == "1":
-                service_type = "DINE IN"
-            elif p_layanan == "3":
-                service_type = "SURVEY"
-            else:
+            if is_kitchen:
+                print(Fore.YELLOW + "   ℹ️  Outlet Kitchen hanya melayani Bawa Pulang (Take Away) & Survey.")
+                print(Fore.WHITE + "   1. Take Away (Bawa Pulang)")
+                print(Fore.WHITE + "   2. Survey Khusus (Katsu Sando)")
+                print(Fore.MAGENTA + "   0. ↩️  Kembali ke Menu Utama")
+                
                 service_type = "TAKE AWAY"
+                p_layanan = input(Fore.YELLOW + "   ?> Pilihan (1/2/0) [Enter = 1]: " + Fore.RESET).strip()
+                if p_layanan == "0" or p_layanan.lower() == "kembali":
+                    return
+                elif p_layanan == "2":
+                    service_type = "SURVEY"
+                else:
+                    service_type = "TAKE AWAY"
+            else:
+                print(Fore.WHITE + "   1. Dine In (Makan di Tempat)")
+                print(Fore.WHITE + "   2. Take Away (Bawa Pulang)")
+                print(Fore.WHITE + "   3. Survey Khusus (Katsu Sando)")
+                print(Fore.MAGENTA + "   0. ↩️  Kembali ke Menu Utama")
+                
+                service_type = "TAKE AWAY"
+                p_layanan = input(Fore.YELLOW + "   ?> Pilihan (1/2/3/0) [Enter = 2]: " + Fore.RESET).strip()
+                if p_layanan == "0" or p_layanan.lower() == "kembali":
+                    return
+                elif p_layanan == "1":
+                    service_type = "DINE IN"
+                elif p_layanan == "3":
+                    service_type = "SURVEY"
+                else:
+                    service_type = "TAKE AWAY"
 
             # 3. Jumlah Sesi
             print(Fore.GREEN + "\n   [ JUMLAH SESI FEEDBACK ]")

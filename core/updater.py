@@ -87,26 +87,22 @@ def send_operational_report(store_name: str, service_type: str, sukses_count: in
     status_text = f"Selesai ({sukses_count}/{total_sessions} Berhasil)"
     if sukses_count < total_sessions:
         gagal_count = total_sessions - sukses_count
-        status_text = f"Selesai ({sukses_count}/{total_sessions} Berhasil, {gagal_count} Gagal)"
-
     msg = (
         f"📊 *[LOG OPERASIONAL HACKBEN]*\n"
-        f"💻 *Perangkat :* `{device_info}`\n"
-        f"🏢 *Store     :* `{store_name}`\n"
-        f"🍱 *Layanan   :* `{service_type}`\n"
-        f"📌 *Status    :* *{status_text}*\n"
-        f"⏰ *Waktu     :* `{time.strftime('%Y-%m-%d %H:%M:%S')}`"
+        f"💻 Perangkat : `{device_info}`\n"
+        f"🏢 Store        : `{store_name}`\n"
+        f"🍱 Layanan    : `{service_type}`\n"
+        f"📌 Status       : *{status_text}*\n"
+        f"⏰ Waktu       : `{time.strftime('%Y-%m-%d %H:%M:%S')}`"
     )
 
     if errors_summary:
         msg += f"\n\n⚠️ *Detail Kendala:* `{errors_summary[-1][:120]}`"
 
-    button = [[{"text": "🔍 Cek Status Portal Web", "url": "https://update.hokben.co.id/"}]]
-
     if last_error_screenshot and sukses_count < total_sessions:
-        send_telegram_photo(last_error_screenshot, msg, inline_keyboard=button)
+        send_telegram_photo(last_error_screenshot, msg)
     else:
-        send_telegram_alert(msg, inline_keyboard=button)
+        send_telegram_alert(msg)
 
 
 def check_and_apply_auto_update_on_launch() -> None:
