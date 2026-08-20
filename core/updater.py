@@ -37,10 +37,10 @@ def get_system_identity() -> str:
         return f"Linux Workstation ({machine})"
     return f"{system_os} ({machine})"
 
-def send_telegram_alert(text: str, inline_keyboard: list | None = None) -> None:
+def send_telegram_alert(text: str, inline_keyboard: list | None = None) -> bool:
     """Send real-time alert text to Telegram bot reliably with plain text fallback."""
     if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
-        return
+        return False
 
     try:
         import requests
@@ -53,19 +53,21 @@ def send_telegram_alert(text: str, inline_keyboard: list | None = None) -> None:
         if inline_keyboard:
             payload_dict["reply_markup"] = json.dumps({"inline_keyboard": inline_keyboard})
 
-        resp = requests.post(url, data=payload_dict, timeout=8)
+        resp = requests.post(url, data=payload_dict, timeout=10)
         if resp.status_code != 200:
             # Fallback without markdown formatting
             payload_dict.pop("parse_mode", None)
-            requests.post(url, data=payload_dict, timeout=8)
-    except Exception:
-        pass
+            resp = requests.post(url, data=payload_dict, timeout=10)
+        return resp.status_code == 200
+    except Exception as e:
+        print(Fore.RED + f"   [⚠️ Telegram Alert Error]: {e}")
+        return False
 
 
-def send_telegram_photo(image_bytes: bytes, caption: str, inline_keyboard: list | None = None) -> None:
+def send_telegram_photo(image_bytes: bytes, caption: str, inline_keyboard: list | None = None) -> bool:
     """Send debug failure screenshot to Telegram bot with plain text fallback."""
     if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
-        return
+        return False
 
     try:
         import requests
@@ -82,13 +84,15 @@ def send_telegram_photo(image_bytes: bytes, caption: str, inline_keyboard: list 
             "photo": ("error_debug.png", image_bytes, "image/png")
         }
 
-        resp = requests.post(url, data=data, files=files, timeout=12)
+        resp = requests.post(url, data=data, files=files, timeout=15)
         if resp.status_code != 200:
             # Fallback without markdown parsing in caption
             data.pop("parse_mode", None)
-            requests.post(url, data=data, files=files, timeout=12)
-    except Exception:
-        pass
+            resp = requests.post(url, data=data, files=files, timeout=15)
+        return resp.status_code == 200
+    except Exception as e:
+        print(Fore.RED + f"   [⚠️ Telegram Photo Error]: {e}")
+        return False
 
 
 def send_operational_report(store_name: str, service_type: str, sukses_count: int, total_sessions: int, errors_summary: list | None = None, last_error_screenshot: bytes | None = None) -> None:
@@ -116,11 +120,16 @@ def send_operational_report(store_name: str, service_type: str, sukses_count: in
         clean_err = errors_summary[-1].replace("*", "").replace("`", "")[:120]
         msg += f"\n⚠️ *Kendala:* `{clean_err}`"
 
+    ok = False
     if last_error_screenshot and sukses_count < total_sessions:
-        send_telegram_photo(last_error_screenshot, msg)
+        ok = send_telegram_photo(last_error_screenshot, msg)
     else:
-        send_telegram_alert(msg)
-    print(Fore.CYAN + "   [📡] Laporan operasional telah dikirim ke Telegram!")
+        ok = send_telegram_alert(msg)
+
+    if ok:
+        print(Fore.CYAN + "   [📡] Laporan operasional telah berhasil dikirim ke Telegram!")
+    else:
+        print(Fore.YELLOW + "   [⚠️] Gagal mengirim laporan ke Telegram (Periksa koneksi internet).")
 
 
 def check_and_apply_auto_update_on_launch() -> None:
