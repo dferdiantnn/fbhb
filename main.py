@@ -41,7 +41,8 @@ class HackbenApp:
             print(Fore.CYAN + "=" * 65)
             regions = get_all_regions()
             for r_id, r_name in regions.items():
-                print(Fore.WHITE + f"   {r_id}. {r_name}")
+                st_count = len(get_region_stores(r_id))
+                print(Fore.WHITE + f"   {r_id}. {r_name} {Fore.YELLOW}({st_count} Store){Fore.WHITE}")
             print(Fore.GREEN + "   S. 🔍 Cari Berdasarkan Nama Kota / Mall (Ketik Kata Kunci)")
             print(Fore.MAGENTA + "   0. ↩️  Kembali")
             print(Fore.CYAN + "-" * 65)
