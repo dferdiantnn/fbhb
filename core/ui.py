@@ -9,7 +9,7 @@ from colorama import Fore, Style, init
 
 init(autoreset=True)
 
-VERSION = "11.0.3 (Universal Cross-Platform Edition)"
+VERSION = "11.0.4 (Universal Cross-Platform Edition)"
 
 SPINNER_FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
 

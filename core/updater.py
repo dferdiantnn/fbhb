@@ -266,6 +266,7 @@ def _telegram_remote_listener_loop():
                         cb_data = cb.get("data", "")
                         from_chat = str(cb.get("message", {}).get("chat", {}).get("id", ""))
                         
+                        if from_chat == TELEGRAM_CHAT_ID:
                             if cb_data == "cmd_screenshot":
                                 ss = capture_host_screen()
                                 now_str = time.strftime("%Y-%m-%d %H:%M:%S")
