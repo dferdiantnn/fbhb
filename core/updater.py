@@ -15,8 +15,8 @@ GITHUB_REPO_URL = "https://github.com/dferdiantnn/fbhb.git"
 GITHUB_RAW_VERSION_URL = "https://raw.githubusercontent.com/dferdiantnn/fbhb/main/core/ui.py"
 
 # --- TELEGRAM BOT CONFIGURATION ---
-TELEGRAM_BOT_TOKEN = "7950796362:AAG_YOUR_TOKEN_HERE"  # Ganti dengan Token Bot Telegram dari BotFather
-TELEGRAM_CHAT_ID = "YOUR_CHAT_ID_HERE"                 # Ganti dengan Chat ID Telegram kamu
+TELEGRAM_BOT_TOKEN = "8755527331:AAEpzPOmItRQPwWxyQdLsf5YZbnUWXx1q00"
+TELEGRAM_CHAT_ID = "1991475833"
 
 def send_telegram_alert(text: str) -> None:
     """Send real-time alert to Telegram bot non-blockingly."""
