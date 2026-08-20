@@ -13,7 +13,7 @@ from core.network import clean_system_processes, get_public_ip, get_current_os
 from core.engine import ensure_playwright_installed, execute_feedback_session
 from core.builder import menu_build_app
 from core.guide import show_user_guide
-from core.updater import check_and_apply_auto_update_on_launch, send_telemetry
+from core.updater import check_and_apply_auto_update_on_launch, send_operational_report
 from data.stores import (
     STORE_DB, 
     get_store_name, 

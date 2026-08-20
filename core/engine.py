@@ -12,7 +12,6 @@ from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeo
 
 from core.ui import Spinner, print_step
 from core.network import parse_proxy_string
-from core.updater import send_telemetry
 from data.devices import get_available_device
 
 TOTAL_STEPS = 7
