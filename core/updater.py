@@ -145,7 +145,8 @@ def check_and_apply_auto_update_on_launch() -> None:
                     os.execv(sys.executable, [sys.executable] + sys.argv)
                 return
             else:
-                sys.stdout.write(Fore.GREEN + f"Versi Terkini ({CURRENT_VERSION})\n")
+                ver_tag = CURRENT_VERSION.split()[0]
+                sys.stdout.write(Fore.GREEN + f"Versi Terkini (v{ver_tag})\n")
                 return
 
         # Fallback for non-git zip standalone setups with cache-busting timestamp
@@ -175,7 +176,8 @@ def check_and_apply_auto_update_on_launch() -> None:
                     os.execv(sys.executable, [sys.executable] + sys.argv)
                 return
             else:
-                sys.stdout.write(Fore.GREEN + f"Versi Terkini ({CURRENT_VERSION})\n")
+                ver_tag = CURRENT_VERSION.split()[0]
+                sys.stdout.write(Fore.GREEN + f"Versi Terkini (v{ver_tag})\n")
     except Exception:
         sys.stdout.write(Fore.YELLOW + "Offline / Melewati cek update.\n")
 
