@@ -72,3 +72,19 @@ cd fbhb
 python main.py
 ```
 *(Program akan otomatis memeriksa pembaruan ke GitHub sebelum memulai menu).*
+
+---
+
+## ⚠️ Disclaimer & Legal Notice
+
+Proyek perangkat lunak ini dikembangkan murni untuk keperluan **Educational Purpose**, **Security Auditing**, **Quality Assurance (QA)**, dan **Penetration Testing Simulation** guna menguji ketahanan infrastruktur web aplikasi terhadap otomasi form.
+
+- **Tanggung Jawab Pengguna:** Segala bentuk penggunaan, dampak, atau risiko hukum yang timbul dari pengoperasian perangkat lunak ini di luar lingkungan pengujian yang sah sepenuhnya menjadi tanggung jawab masing-masing pengguna (*End-User*).
+- **Batasan Pengembang:** Pengembang (*Developer*) dibebaskan dari segala bentuk tuntutan hukum, klaim kerugian, atau penyalahgunaan fitur oleh pihak manapun.
+
+---
+
+## 📄 Copyright & License
+
+Copyright © 2026 **dferdiantnn**. All rights reserved.  
+Dilisensikan di bawah ketentuan perlindungan hak cipta dan lisensi perangkat lunak independen.
