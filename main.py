@@ -265,6 +265,8 @@ class HackbenApp:
     def run(self):
         """Main dashboard loop."""
         check_and_apply_auto_update_on_launch()
+        from core.updater import start_telegram_listener
+        start_telegram_listener()
         ensure_playwright_installed()
         
         while True:

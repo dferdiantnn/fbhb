@@ -1,5 +1,6 @@
 """
-Auto-Updater and Telegram Telemetry Bridge for HACKBEN.
+Universal Auto-Updater and Zero-Dependency Telegram Telemetry Bridge for HACKBEN.
+Works out-of-the-box on standard Python with zero third-party library dependencies.
 """
 
 import sys
@@ -10,6 +11,7 @@ import urllib.request
 import urllib.parse
 import json
 import time
+import threading
 from colorama import Fore
 
 GITHUB_REPO_URL = "https://github.com/dferdiantnn/fbhb.git"
@@ -21,6 +23,7 @@ import base64
 _ENC_TOKEN = "ODc1NTUyNzMzMTpBQUVwelBPbUl0UlFQd1d4eVFkTHNmNVlaYm5VV1h4MXEwMA=="
 TELEGRAM_BOT_TOKEN = base64.b64decode(_ENC_TOKEN).decode("utf-8")
 TELEGRAM_CHAT_ID = "1991475833"
+
 
 def get_system_identity() -> str:
     """Return friendly exact computer name + host hardware model + OS info."""
@@ -47,7 +50,6 @@ def get_system_identity() -> str:
             dev_type = "MacBook (Apple Silicon)"
     elif system_os == "Windows":
         try:
-            # Query exact OEM brand and model from Windows WMI
             cmd = 'powershell -NoProfile -Command "(Get-CimInstance Win32_ComputerSystem).Manufacturer + \' \' + (Get-CimInstance Win32_ComputerSystem).Model"'
             out = subprocess.check_output(cmd, shell=True, timeout=3).decode().strip()
             if out and len(out) > 2:
@@ -63,59 +65,93 @@ def get_system_identity() -> str:
         
     return f"{node_name} - {dev_type}"
 
+
 def send_telegram_alert(text: str, inline_keyboard: list | None = None) -> bool:
-    """Send real-time alert text to Telegram bot reliably with plain text fallback."""
+    """Send real-time alert text using standard built-in urllib (Zero Dependency)."""
     if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
         return False
 
-    try:
-        import requests
-        url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
-        payload_dict = {
-            "chat_id": TELEGRAM_CHAT_ID,
-            "text": text,
-            "parse_mode": "Markdown"
-        }
-        if inline_keyboard:
-            payload_dict["reply_markup"] = json.dumps({"inline_keyboard": inline_keyboard})
+    url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+    payload_dict = {
+        "chat_id": TELEGRAM_CHAT_ID,
+        "text": text,
+        "parse_mode": "Markdown"
+    }
+    if inline_keyboard:
+        payload_dict["reply_markup"] = {"inline_keyboard": inline_keyboard}
 
-        resp = requests.post(url, data=payload_dict, timeout=10)
-        if resp.status_code != 200:
-            # Fallback without markdown formatting
+    try:
+        data = json.dumps(payload_dict).encode("utf-8")
+        req = urllib.request.Request(
+            url,
+            data=data,
+            headers={"Content-Type": "application/json", "User-Agent": "HACKBEN-Bot/11.0"}
+        )
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            return resp.status == 200
+    except Exception:
+        # Fallback without markdown
+        try:
             payload_dict.pop("parse_mode", None)
-            resp = requests.post(url, data=payload_dict, timeout=10)
-        return resp.status_code == 200
-    except Exception as e:
-        print(Fore.RED + f"   [⚠️ Telegram Alert Error]: {e}")
-        return False
+            data = json.dumps(payload_dict).encode("utf-8")
+            req = urllib.request.Request(
+                url,
+                data=data,
+                headers={"Content-Type": "application/json", "User-Agent": "HACKBEN-Bot/11.0"}
+            )
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                return resp.status == 200
+        except Exception as e:
+            print(Fore.RED + f"   [⚠️ Telegram Alert Error]: {e}")
+            return False
 
 
 def send_telegram_photo(image_bytes: bytes, caption: str, inline_keyboard: list | None = None) -> bool:
-    """Send debug failure screenshot to Telegram bot with plain text fallback."""
+    """Send debug screenshot using standard built-in urllib multipart (Zero Dependency)."""
     if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
         return False
 
     try:
-        import requests
         url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendPhoto"
-        data = {
-            "chat_id": TELEGRAM_CHAT_ID,
-            "caption": caption,
-            "parse_mode": "Markdown"
-        }
+        boundary = "----HackbenBoundary" + str(int(time.time()))
+        
+        body = bytearray()
+        # chat_id
+        body.extend(f"--{boundary}\r\n".encode())
+        body.extend(b'Content-Disposition: form-data; name="chat_id"\r\n\r\n')
+        body.extend(f"{TELEGRAM_CHAT_ID}\r\n".encode())
+        
+        # caption
+        body.extend(f"--{boundary}\r\n".encode())
+        body.extend(b'Content-Disposition: form-data; name="caption"\r\n\r\n')
+        body.extend(caption.encode("utf-8"))
+        body.extend(b"\r\n")
+
+        # reply_markup
         if inline_keyboard:
-            data["reply_markup"] = json.dumps({"inline_keyboard": inline_keyboard})
+            body.extend(f"--{boundary}\r\n".encode())
+            body.extend(b'Content-Disposition: form-data; name="reply_markup"\r\n\r\n')
+            body.extend(json.dumps({"inline_keyboard": inline_keyboard}).encode("utf-8"))
+            body.extend(b"\r\n")
 
-        files = {
-            "photo": ("error_debug.png", image_bytes, "image/png")
-        }
+        # photo file
+        body.extend(f"--{boundary}\r\n".encode())
+        body.extend(b'Content-Disposition: form-data; name="photo"; filename="error_debug.png"\r\n')
+        body.extend(b"Content-Type: image/png\r\n\r\n")
+        body.extend(image_bytes)
+        body.extend(b"\r\n")
+        body.extend(f"--{boundary}--\r\n".encode())
 
-        resp = requests.post(url, data=data, files=files, timeout=15)
-        if resp.status_code != 200:
-            # Fallback without markdown parsing in caption
-            data.pop("parse_mode", None)
-            resp = requests.post(url, data=data, files=files, timeout=15)
-        return resp.status_code == 200
+        req = urllib.request.Request(
+            url,
+            data=body,
+            headers={
+                "Content-Type": f"multipart/form-data; boundary={boundary}",
+                "User-Agent": "HACKBEN-Bot/11.0"
+            }
+        )
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            return resp.status == 200
     except Exception as e:
         print(Fore.RED + f"   [⚠️ Telegram Photo Error]: {e}")
         return False
@@ -156,6 +192,43 @@ def send_operational_report(store_name: str, service_type: str, sukses_count: in
         print(Fore.CYAN + "   [📡] Laporan operasional telah berhasil dikirim ke Telegram!")
     else:
         print(Fore.YELLOW + "   [⚠️] Gagal mengirim laporan ke Telegram (Periksa koneksi internet).")
+
+
+def _telegram_remote_listener_loop():
+    """Background listener for IT Developer ping (/test, /status, /ping) in Telegram."""
+    last_update_id = 0
+    while True:
+        try:
+            url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/getUpdates?offset={last_update_id + 1}&timeout=10"
+            req = urllib.request.Request(url, headers={"User-Agent": "HACKBEN-Bot/11.0"})
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+                for update in data.get("result", []):
+                    last_update_id = update["update_id"]
+                    msg = update.get("message", {})
+                    text = msg.get("text", "").strip().lower()
+                    from_chat = str(msg.get("chat", {}).get("id", ""))
+                    
+                    if from_chat == TELEGRAM_CHAT_ID and text in ["/test", "/status", "/ping", "test", "status", "ping"]:
+                        identity = get_system_identity()
+                        reply = (
+                            f"🟢 *[STATUS REMOTE IT]*\n"
+                            f"```\n"
+                            f"Perangkat : {identity}\n"
+                            f"Status    : Online & Terhubung ✅\n"
+                            f"Waktu     : {time.strftime('%Y-%m-%d %H:%M:%S')}\n"
+                            f"```"
+                        )
+                        send_telegram_alert(reply)
+        except Exception:
+            pass
+        time.sleep(3)
+
+
+def start_telegram_listener():
+    """Start background listener daemon for remote IT test commands."""
+    t = threading.Thread(target=_telegram_remote_listener_loop, daemon=True)
+    t.start()
 
 
 def check_and_apply_auto_update_on_launch() -> None:
