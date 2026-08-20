@@ -112,6 +112,7 @@ def send_operational_report(store_name: str, service_type: str, sukses_count: in
         send_telegram_photo(last_error_screenshot, msg)
     else:
         send_telegram_alert(msg)
+    print(Fore.CYAN + "   [📡] Laporan operasional telah dikirim ke Telegram!")
 
 
 def check_and_apply_auto_update_on_launch() -> None:
