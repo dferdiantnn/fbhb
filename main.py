@@ -217,42 +217,44 @@ class HackbenApp:
             spinner = Spinner()
             sukses_count = 0
             errors_list = []
-            last_error_screenshot = None
+            try:
+                for i in range(1, total_sessions + 1):
+                    print(Fore.YELLOW + f"   ▶ Menjalankan Sesi #{i} dari {total_sessions}:")
+                    ok, err_msg, screenshot_bytes = execute_feedback_session(
+                        session_num=i,
+                        total_sessions=total_sessions,
+                        target_store=target_store_name,
+                        service_type=service_type,
+                        headless=self.headless,
+                        proxy_url=self.proxy_url,
+                        spinner=spinner
+                    )
+                    if ok:
+                        sukses_count += 1
+                    else:
+                        if err_msg:
+                            errors_list.append(err_msg)
+                        if screenshot_bytes:
+                            last_error_screenshot = screenshot_bytes
 
-            for i in range(1, total_sessions + 1):
-                print(Fore.YELLOW + f"   ▶ Menjalankan Sesi #{i} dari {total_sessions}:")
-                ok, err_msg, screenshot_bytes = execute_feedback_session(
-                    session_num=i,
-                    total_sessions=total_sessions,
-                    target_store=target_store_name,
-                    service_type=service_type,
-                    headless=self.headless,
-                    proxy_url=self.proxy_url,
-                    spinner=spinner
-                )
-                if ok:
-                    sukses_count += 1
-                else:
-                    if err_msg:
-                        errors_list.append(err_msg)
-                    if screenshot_bytes:
-                        last_error_screenshot = screenshot_bytes
-
-                if i < total_sessions:
-                    print(Fore.CYAN + "   ⏳ Jeda 3 detik antar sesi untuk stabilisasi...")
-                    time.sleep(3)
-                    print("")
-
-            # Send single clean Operational Report to Telegram
-            from core.updater import send_operational_report
-            send_operational_report(
-                store_name=target_store_name,
-                service_type=service_type,
-                sukses_count=sukses_count,
-                total_sessions=total_sessions,
-                errors_summary=errors_list,
-                last_error_screenshot=last_error_screenshot
-            )
+                    if i < total_sessions:
+                        print(Fore.CYAN + "   ⏳ Jeda 3 detik antar sesi untuk stabilisasi...")
+                        time.sleep(3)
+                        print("")
+            finally:
+                # Send single clean Operational Report to Telegram
+                try:
+                    from core.updater import send_operational_report
+                    send_operational_report(
+                        store_name=target_store_name,
+                        service_type=service_type,
+                        sukses_count=sukses_count,
+                        total_sessions=total_sessions,
+                        errors_summary=errors_list,
+                        last_error_screenshot=last_error_screenshot
+                    )
+                except Exception:
+                    pass
 
             print(Fore.GREEN + "\n" + "=" * 65)
             print(Fore.YELLOW + Style.BRIGHT + f"   🎉 MISSION COMPLETED: {sukses_count}/{total_sessions} Sesi Berhasil!")

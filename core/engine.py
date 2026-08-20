@@ -32,6 +32,17 @@ def ensure_playwright_installed():
         sys.exit(1)
 
 
+def _click_input(loc) -> None:
+    """Safe click helper using JavaScript dispatch to work on hidden/animating elements."""
+    try:
+        loc.evaluate("el => { el.checked = true; el.click(); el.dispatchEvent(new Event('change', {bubbles: true})); }")
+    except Exception:
+        try:
+            loc.click(force=True)
+        except Exception:
+            pass
+
+
 def answer_question_smartly(q_element) -> None:
     """
     Intelligently answers a question fieldset:
@@ -48,56 +59,56 @@ def answer_question_smartly(q_element) -> None:
     # Rule 1: Sesuai / Sudah Sesuai -> Always SESUAI
     sesuai_inputs = q_element.locator("label:has-text('Sudah Sesuai') input, label:has-text('Sesuai') input, input[value*='Sesuai' i]")
     if sesuai_inputs.count() > 0:
-        sesuai_inputs.first.click(force=True)
+        _click_input(sesuai_inputs.first)
         return
 
     # Special Question: Roti menyusut / kempes -> Pilih Tidak (jika tidak ada opsi Sesuai)
     if "roti" in text_content or "kempes" in text_content or "menyusut" in text_content:
         tidak_inputs = q_element.locator("label:has-text('Tidak') input, input[value*='Tidak' i]")
         if tidak_inputs.count() > 0:
-            tidak_inputs.first.click(force=True)
+            _click_input(tidak_inputs.first)
             return
 
     # Rule 2: Ya / Tidak questions -> Always YA
     ya_inputs = q_element.locator("label:has-text('Ya') input, input[value*='Ya' i], input[value='1']")
     if "ya" in text_content and ya_inputs.count() > 0:
-        ya_inputs.first.click(force=True)
+        _click_input(ya_inputs.first)
         return
 
     # Rule 3: Kepuasan -> Always SANGAT PUAS
     sangat_puas_inputs = q_element.locator("label:has-text('Sangat Puas') input, label:has-text('Sangat Baik') input")
     if sangat_puas_inputs.count() > 0:
-        sangat_puas_inputs.first.click(force=True)
+        _click_input(sangat_puas_inputs.first)
         return
 
-    # Rule 3: Usia -> Random above 13 years
+    # Rule 4: Usia -> Random above 13 years
     if "usia" in text_content or "umur" in text_content:
         valid_age_labels = q_element.locator("label:not(:has-text('<13')):not(:has-text('< 13')) input")
         if valid_age_labels.count() > 0:
             idx = random.randint(0, valid_age_labels.count() - 1)
-            valid_age_labels.nth(idx).click(force=True)
+            _click_input(valid_age_labels.nth(idx))
             return
 
-    # Rule 4: Range Harga -> Random above 25.000
+    # Rule 5: Range Harga -> Random above 25.000
     if "harga" in text_content or "range" in text_content or "pembelian" in text_content:
         valid_price_labels = q_element.locator("label:not(:has-text('< Rp 25.000')):not(:has-text('< 25.000')):not(:has-text('<Rp 25.000')) input")
         if valid_price_labels.count() > 0:
             idx = random.randint(0, valid_price_labels.count() - 1)
-            valid_price_labels.nth(idx).click(force=True)
+            _click_input(valid_price_labels.nth(idx))
             return
 
-    # Rule 5: Gender (Pria / Wanita) & Other general questions -> Random 1 choice
+    # Rule 6: Gender (Pria / Wanita) & Other general questions -> Random 1 choice
     all_radios = q_element.locator("input[type='radio']")
     if all_radios.count() > 0:
         idx = random.randint(0, all_radios.count() - 1)
-        all_radios.nth(idx).click(force=True)
+        _click_input(all_radios.nth(idx))
         return
 
     # Fallback checkboxes (pick exactly 1 random)
     all_checkboxes = q_element.locator("input[type='checkbox']")
     if all_checkboxes.count() > 0:
         idx = random.randint(0, all_checkboxes.count() - 1)
-        all_checkboxes.nth(idx).click(force=True)
+        _click_input(all_checkboxes.nth(idx))
 
 
 def execute_feedback_session(
