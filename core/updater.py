@@ -43,7 +43,15 @@ def get_system_identity() -> str:
         except Exception:
             return "MacBook (Apple Silicon)"
     elif system_os == "Windows":
-        return f"Windows PC ({platform.processor() or machine})"
+        try:
+            # Query exact OEM brand and model from Windows WMI
+            cmd = 'powershell -NoProfile -Command "(Get-CimInstance Win32_ComputerSystem).Manufacturer + \' \' + (Get-CimInstance Win32_ComputerSystem).Model"'
+            out = subprocess.check_output(cmd, shell=True, timeout=3).decode().strip()
+            if out and len(out) > 2:
+                return f"{out} (Windows)"
+            return f"Windows PC ({platform.processor() or machine})"
+        except Exception:
+            return f"Windows PC ({machine})"
     elif system_os == "Linux":
         return f"Linux Workstation ({machine})"
     return f"{system_os} ({machine})"
