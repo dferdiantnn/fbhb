@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
 """
 HACKBEN - Universal Cross-Platform Automation Suite
-Entry Point & Interactive Dashboard.
+Entry Point & Interactive Dashboard with Auto-Update & Telemetry Bridge.
 """
 
 import sys
 import time
 from colorama import Fore, Style, init
 
-from core.ui import print_banner, Spinner
+from core.ui import print_banner, Spinner, VERSION
 from core.network import clean_system_processes, get_public_ip, get_current_os
 from core.engine import ensure_playwright_installed, execute_feedback_session
 from core.builder import menu_build_app
+from core.updater import check_for_updates, perform_auto_update, send_telemetry
 from data.stores import STORE_DB, get_store_name, search_stores
 from data.devices import get_device_count
 
@@ -23,6 +24,31 @@ class HackbenApp:
         self.proxy_url = None
         self.default_store_code = "C55"
         self.default_service = "TAKE AWAY"
+
+    def menu_update_checker(self):
+        """Interactive update menu from GitHub repo."""
+        print(Fore.CYAN + "\n" + "=" * 65)
+        print(Fore.YELLOW + Style.BRIGHT + "   🔄 SISTEM PEMBARUAN OTOMATIS (GITHUB)")
+        print(Fore.CYAN + "=" * 65)
+        
+        spinner = Spinner(message="Memeriksa rilis terbaru di GitHub...")
+        spinner.start()
+        has_update, latest_ver = check_for_updates()
+        
+        if has_update:
+            spinner.stop(f"Pembaruan Ditemukan! Versi terbaru: {Fore.GREEN}{latest_ver}{Fore.RESET}", success=True)
+            print(Fore.WHITE + f"   Versi Anda saat ini: {Fore.YELLOW}{VERSION}{Fore.RESET}")
+            print(Fore.CYAN + "\n   Apakah kamu ingin memperbarui dan menimpa file lama sekarang?")
+            confirm = input(Fore.YELLOW + "   ?> Update sekarang? (y/n) [Enter = y]: " + Fore.RESET).strip().lower()
+            if confirm in ["y", "yes", ""]:
+                print("")
+                if perform_auto_update():
+                    print(Fore.GREEN + "\n   🎉 Program berhasil diperbarui! Silakan restart aplikasi.")
+                    sys.exit(0)
+        else:
+            spinner.stop(f"Anda sudah menggunakan versi paling mutakhir ({VERSION}).", success=True)
+
+        input(Fore.YELLOW + "\n   [Tekan Enter untuk kembali...]" + Fore.RESET)
 
     def menu_network_settings(self):
         """Configure Proxy and check public IP."""
@@ -129,6 +155,9 @@ class HackbenApp:
         print(Fore.CYAN + "=" * 65 + "\n")
         time.sleep(1.5)
 
+        # Telemetry Start
+        send_telemetry("start_session", target_store_name, 0, total_sessions, status="started", extra=f"service={service_type}")
+
         spinner = Spinner()
         sukses_count = 0
 
@@ -145,11 +174,17 @@ class HackbenApp:
             )
             if ok:
                 sukses_count += 1
+                send_telemetry("session_progress", target_store_name, i, total_sessions, status="success")
+            else:
+                send_telemetry("session_progress", target_store_name, i, total_sessions, status="failed")
 
             if i < total_sessions:
                 print(Fore.CYAN + "   ⏳ Jeda 3 detik antar sesi untuk stabilisasi...")
                 time.sleep(3)
                 print("")
+
+        # Telemetry Finish
+        send_telemetry("finish_session", target_store_name, sukses_count, total_sessions, status="completed")
 
         print(Fore.GREEN + "\n" + "=" * 65)
         print(Fore.YELLOW + Style.BRIGHT + f"   🎉 MISSION COMPLETED: {sukses_count}/{total_sessions} Sesi Berhasil!")
@@ -168,10 +203,11 @@ class HackbenApp:
                 print("   2. 👁️  Pengaturan Tampilan (Headless Background / Visual)")
                 print("   3. 🌐 Pengaturan Jaringan & Proxy")
                 print("   4. 🛠️  Jadikan Aplikasi (Build Standalone .exe / dll)")
+                print("   5. 🔄 Cek & Perbarui Versi (Auto-Update GitHub)")
                 print("   0. 🚪 Keluar")
                 print("")
 
-                pilihan = input(Fore.YELLOW + "   ?> Masukkan pilihan (0-4): " + Fore.RESET).strip()
+                pilihan = input(Fore.YELLOW + "   ?> Masukkan pilihan (0-5): " + Fore.RESET).strip()
 
                 if pilihan == "1":
                     self.start_bot()
@@ -181,6 +217,8 @@ class HackbenApp:
                     self.menu_network_settings()
                 elif pilihan == "4":
                     menu_build_app()
+                elif pilihan == "5":
+                    self.menu_update_checker()
                 elif pilihan == "0":
                     clean_system_processes()
                     print(Fore.CYAN + "\n   Sampai jumpa! Stay safe & keep coding. 🚀\n")
