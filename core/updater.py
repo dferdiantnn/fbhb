@@ -94,17 +94,19 @@ def send_operational_report(store_name: str, service_type: str, sukses_count: in
         status_text = f"Selesai ({sukses_count}/{total_sessions} Berhasil, {gagal_count} Gagal)"
 
     msg = (
-        f"📊 *[LOG OPERASIONAL HACKBEN]*\n"
-        f"💻 Perangkat : `{device_info}`\n"
-        f"🏢 Store     : `{store_name}`\n"
-        f"🍱 Layanan   : `{service_type}`\n"
-        f"📌 Status    : *{status_text}*\n"
-        f"⏰ Waktu     : `{time.strftime('%Y-%m-%d %H:%M:%S')}`"
+        f"📊 *LOG OPERASIONAL HACKBEN*\n"
+        f"```\n"
+        f"Perangkat : {device_info}\n"
+        f"Store     : {store_name}\n"
+        f"Layanan   : {service_type}\n"
+        f"Status    : {status_text}\n"
+        f"Waktu     : {time.strftime('%Y-%m-%d %H:%M:%S')}\n"
+        f"```"
     )
 
     if errors_summary:
         clean_err = errors_summary[-1].replace("*", "").replace("`", "")[:120]
-        msg += f"\n\n⚠️ Detail Kendala: `{clean_err}`"
+        msg += f"\n⚠️ *Kendala:* `{clean_err}`"
 
     if last_error_screenshot and sukses_count < total_sessions:
         send_telegram_photo(last_error_screenshot, msg)
