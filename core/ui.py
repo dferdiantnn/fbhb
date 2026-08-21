@@ -9,7 +9,7 @@ from colorama import Fore, Style, init
 
 init(autoreset=True)
 
-VERSION = "11.0.8 (Universal Cross-Platform Edition)"
+VERSION = "11.0.9 (Universal Cross-Platform Edition)"
 
 SPINNER_FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
 
@@ -58,37 +58,15 @@ class Spinner:
 
 
 def print_banner(store_name: str | None = None, mode: str | None = None, headless: bool = True):
-    """Render authentic Bento Box terminal banner for HACKBEN."""
-    bento = (
-        f"{Fore.GREEN}hackben@localhost:$ deploy_Bento.sh --casual-mode\n\n"
-        f"{Fore.WHITE}System core:\n"
-        f"Network: Integrt:\n"
-        f"{Fore.GREEN}hackben@localhost:${Fore.WHITE}\n"
-        f"System Integrity: {Fore.GREEN}Nominal\n\n"
-        f"{Fore.WHITE}._________________________________________________________.\n"
-        f"|  #   #     #   |        {Fore.GREEN}/------------\\{Fore.WHITE}                 |\n"
-        f"|    #   # #     |       {Fore.GREEN}/      {Fore.YELLOW}@{Fore.GREEN}       \\{Fore.WHITE}                |\n"
-        f"|     # ### #    |      {Fore.GREEN}|       {Fore.YELLOW}@{Fore.GREEN}        |{Fore.WHITE}               |\n"
-        f"|    # ## #      |      {Fore.GREEN}|      {Fore.YELLOW}@@{Fore.GREEN}        |{Fore.WHITE}               |\n"
-        f"|   #     #   #  |       {Fore.GREEN}\\      {Fore.YELLOW}@{Fore.GREEN}       /{Fore.WHITE}                |\n"
-        f"|     #   # #    |        {Fore.GREEN}\\____/ \\_____/{Fore.WHITE}                 |\n"
-        f"|________________|________________________________________|\n"
-        f"|  {Fore.CYAN}/\\{Fore.WHITE}            |       | |    {Fore.GREEN}\\    /{Fore.WHITE}                   |\n"
-        f"| {Fore.CYAN}/  \\{Fore.WHITE}     #     |       |{Fore.YELLOW}\'{Fore.WHITE}|    {Fore.GREEN}( - ){Fore.WHITE}                  |\n"
-        f"| {Fore.CYAN}\\  /{Fore.WHITE}       ##  |_______|_|   {Fore.GREEN}/ \\_/ \\{Fore.WHITE}                 |\n"
-        f"|  {Fore.CYAN}\\/{Fore.WHITE}   /-\\      |             {Fore.GREEN}|     |{Fore.WHITE}                 |\n"
-        f"|      (   )  #  |            {Fore.GREEN}/ \\___/ \\{Fore.WHITE}                |\n"
-        f"|   #    #   #   |           {Fore.GREEN}/_________\\{Fore.WHITE}               |\n"
-        f"|________________|________________________________________|\n"
-        f" \\______________________________________________________/\n\n"
-        f"     {Fore.GREEN}{Style.BRIGHT}██╗  ██╗ █████╗  ██████╗██╗  ██╗██████╗ ███████╗███╗   ██╗\n"
-        f"     ██║  ██║██╔══██╗██╔════╝██║ ██╔╝██╔══██╗██╔════╝████╗  ██║\n"
-        f"     ███████║███████║██║     █████═╝ ██████╔╝█████╗  ██╔██╗ ██║\n"
-        f"     ██╔══██║██╔══██║██║     ██╔═██╗ ██╔══██╗██╔══╝  ██║╚██╗██║\n"
-        f"     ██║  ██║██║  ██║╚██████╗██║ ╚██╗██████╔╝███████╗██║ ╚████║\n"
-        f"     ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚═════╝ ╚══════╝╚═╝  ╚═══╝{Fore.RESET}\n"
-    )
-    print(bento)
+    """Render high-contrast symmetric retro block banner for HACKBEN."""
+    print(Fore.GREEN + Style.BRIGHT + r"""
+   ██╗  ██╗ █████╗  ██████╗██╗  ██╗██████╗ ███████╗███╗   ██╗
+   ██║  ██║██╔══██╗██╔════╝██║ ██╔╝██╔══██╗██╔════╝████╗  ██║
+   ███████║███████║██║     █████═╝ ██████╔╝█████╗  ██╔██╗ ██║
+   ██╔══██║██╔══██║██║     ██╔═██╗ ██╔══██╗██╔══╝  ██║╚██╗██║
+   ██║  ██║██║  ██║╚██████╗██║ ╚██╗██████╔╝███████╗██║ ╚████║
+   ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚═════╝ ╚══════╝╚═╝  ╚═══╝""" + "\n" +
+   Fore.YELLOW + "    🍱 Bento Engine • Universal Automation Suite by Ferr ⚡")
     print(Fore.CYAN + "=" * 61)
     print(Fore.WHITE + f"   📦 Versi     : {VERSION}")
     if store_name:
