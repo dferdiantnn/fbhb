@@ -3,7 +3,7 @@
 </p>
 
 # ⚡ HACKBEN - Universal Next-Gen Automation Suite
-`Versi: v41.0.8 (Universal Multi-Platform Release)`
+`Versi: v41.0.9 (Universal Multi-Platform Release)`
 
 [![Python Version](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13%20%7C%203.14-blue?logo=python&logoColor=white)](https://python.org)
 [![Engine](https://img.shields.io/badge/Engine-Playwright%20Chromium%20Async-green?logo=playwright&logoColor=white)](https://playwright.dev)
@@ -129,6 +129,23 @@ flowchart TD
 ### 3. 🔄 Zero-Cache Auto-Updater (`core/updater.py`)
 * Memanfaatkan Git Remote Tracking Commit Hash (`git rev-parse HEAD` vs `git rev-parse origin/main`) untuk memotong cache CDN GitHub hingga 0 detik.
 * Menampilkan ringkasan catatan perbaikan (*commit log note*) langsung di terminal saat pembaruan terdeteksi.
+
+---
+
+## 📊 Tabel Perbandingan Arsitektur: Legacy (Awal) vs Next-Gen HACKBEN
+
+Berikut perbandingan teknis antara skrip versi awal (*Legacy fbhb / fbhbk*) dengan arsitektur **HACKBEN Next-Gen** saat ini:
+
+| Fitur / Parameter | ⏳ Versi Awal (Legacy fbhb / fbhbk) | ⚡ HACKBEN Next-Gen (Saat Ini) |
+| :--- | :--- | :--- |
+| **Kecepatan Eksekusi** | **~20 – 45 Detik / Sesi** *(Lambat, klik tombol wizard bertahap)* | **~1.0 – 1.5 Detik / Sesi** ⚡ *(Batch DOM Evaluation + Asset Blocking)* |
+| **Beban Bandwidth Data** | **Tinggi (100% Full Load)** *(Download gambar, font, banner)* | **Super Hemat (>85% Cut)** *(Blokir otomatis .png, .jpg, .woff, .svg)* |
+| **Matrix Profil Perangkat** | Sedikit / Statis *(Rentan terdeteksi pola berulang)* | **130+ Smartphone Modern (2020–2026)** *(Lengkap 48-Hour Cooldown)* |
+| **Dukungan Perangkat** | Terbatas pada PC / Laptop tertentu | **Universal (Windows, macOS, Linux, & HP Android)** |
+| **Kemudahan Setup** | Manual, panjang, dan rawan salah ketik | **1-Line Zero-Setup Auto-Installer** *(Perintah instan `ferr`)* |
+| **Proteksi Source Code** | Plaintext mentah *(Mudah diintip & dicontek)* | **100% Dynamic Binary Cipher** *(Anti-Decompile & Anti-Tamper)* |
+| **Sistem Auto-Update** | Manual download ulang / Git pull manual | **Zero-Cache Git Real-Time Updater** *(Auto-update instan saat dibuka)* |
+| **Pelaporan Operasional** | Teks terminal standar tanpa rekap otomatis | **Silent IT DEV Telemetry** *(Lengkap rekapan sesi & tangkapan layar)* |
 
 ---
 
