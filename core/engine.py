@@ -135,8 +135,7 @@ def execute_feedback_session(
     device = get_available_device()
     if not device:
         spinner.stop("Gagal mendapatkan profil perangkat dari database.", success=False)
-        send_telemetry("session_progress", target_store, session_num, total_sessions, status="failed", extra="Device database empty")
-        return False
+        return False, "Device database empty", None
 
     proxy_cfg = parse_proxy_string(proxy_url)
 
