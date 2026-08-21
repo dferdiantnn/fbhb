@@ -60,7 +60,9 @@ echo -e "\033[1;36m[5/5] Membuat perintah pintasan instan 'ferr'...\033[0m"
 mkdir -p "$HOME/.local/bin"
 cat << EOF > "$HOME/.local/bin/ferr"
 #!/usr/bin/env bash
+clear
 cd "$ABS_PATH" && source venv/bin/activate && python3 main.py
+clear
 EOF
 chmod +x "$HOME/.local/bin/ferr"
 cp "$HOME/.local/bin/ferr" "$HOME/.local/bin/hackben"

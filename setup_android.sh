@@ -41,7 +41,9 @@ proot-distro login ubuntu -- bash -c "
 echo -e "\033[1;36m[4/4] Membuat perintah pintasan 'ferr' di Termux...\033[0m"
 cat << 'EOF' > "$PREFIX/bin/ferr"
 #!/usr/bin/env bash
+clear
 proot-distro login ubuntu -- bash -c "cd /root/hackben && source venv/bin/activate && python3 main.py"
+clear
 EOF
 chmod +x "$PREFIX/bin/ferr"
 cp "$PREFIX/bin/ferr" "$PREFIX/bin/hackben"
