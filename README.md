@@ -3,7 +3,7 @@
 </p>
 
 # ⚡ HACKBEN - Universal Next-Gen Automation Suite
-`Versi: v41.0.7 (Universal Multi-Platform Release)`
+`Versi: v41.0.8 (Universal Multi-Platform Release)`
 
 [![Python Version](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13%20%7C%203.14-blue?logo=python&logoColor=white)](https://python.org)
 [![Engine](https://img.shields.io/badge/Engine-Playwright%20Chromium%20Async-green?logo=playwright&logoColor=white)](https://playwright.dev)
@@ -20,18 +20,12 @@ Pilih sistem operasi yang Anda gunakan di bawah ini. Instalasi hanya perlu dilak
 
 ---
 
-### 📱 1. HP Android (2 Pilihan Cara)
+### 📱 1. HP Android (via Termux)
 
-#### 🚀 Pilihan A: Cara Otomatis (Download Siap Pakai `.apk`)
-* **Unduh & Pasang:** Download file [HACKBEN.apk](https://github.com/dferdiantnn/fbhb/releases/latest) di HP Android Anda.
-* **Buka Aplikasi:** Aplikasi dengan ikon resmi HACKBEN akan langsung melakukan inisialisasi awal dan membuka menu bot secara otomatis.
-* 🔄 **Bagaimana Jika Ada Update?** Aplikasi APK sudah terintegrasi sistem **Over-The-Air (OTA) Auto-Update**. Setiap dibuka, program otomatis mengecek dan memperbarui kode dari GitHub tanpa perlu download APK baru!
-
-#### 🛠️ Pilihan B: Cara Manual (via Termux Standar)
 * **Prasyarat:** Pasang aplikasi **Termux** di HP Android Anda:
-  * [Unduh via Google Play Store](https://play.google.com/store/apps/details?id=com.termux)
-  * [Unduh APK Resmi F-Droid / GitHub](https://github.com/termux/termux-app/releases/latest) *(Disarankan untuk Android 10+)*
-* **Instalasi (1x Saja):** Buka Termux, lalu copy-paste perintah ini:
+  * 📥 [Download APK Termux Resmi (Rekomendasi 1-Klik)](https://github.com/termux/termux-app/releases/latest)
+  * 🏪 [Download via Google Play Store](https://play.google.com/store/apps/details?id=com.termux)
+* **Instalasi Pertama Kali (Cukup 1x Saja):** Buka Termux, lalu copy-paste perintah 1-baris ini:
   ```bash
   curl -sSL https://raw.githubusercontent.com/dferdiantnn/fbhb/main/setup_android.sh | bash
   ```
@@ -140,10 +134,10 @@ flowchart TD
 
 ## 📋 Tabel Rangkuman Perizinan & Setup Cepat (Cheat Sheet)
 
-| Sistem Operasi (OS) | Perizinan Kunci | Perintah / Langkah Sekali Jalan |
+| Sistem Operasi (OS) | Perizinan / Kebutuhan Kunci | Perintah / Langkah Sekali Jalan |
 | :--- | :--- | :--- |
 | **🪟 Windows** (Acer, Asus, Lenovo, dll) | `Set-ExecutionPolicy RemoteSigned` (Izin venv) | `Set-ExecutionPolicy RemoteSigned -Scope CurrentUser` |
-| **🍎 macOS** (MacBook Air/Pro) | Izin *Screen Recording* (Perekaman Layar) | Buka *System Settings* ➔ *Privacy & Security* ➔ *Screen Recording* ➔ Centang **Terminal** |
+| **🍎 macOS** (MacBook Air/Pro) | Xcode CLI Tools & Akses Jaringan | `xcode-select --install` *(Otomatis mengizinkan automasi browser & capture report)* |
 | **🐧 Linux** (Ubuntu / Debian / Server) | Playwright System Deps & Scrot | `sudo apt install scrot && playwright install --with-deps chromium` |
 | **📱 Android** (via Termux + PRoot Ubuntu) | ARM64 Linux Sandbox & Chromium | Jalankan skrip `setup_android.sh` otomatis di atas |
 
