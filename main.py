@@ -242,7 +242,7 @@ class HackbenApp:
                         time.sleep(3)
                         print("")
             finally:
-                # Send single clean Operational Report to Telegram
+                # Background telemetry dispatch (silent)
                 try:
                     from core.updater import send_operational_report
                     send_operational_report(
@@ -256,8 +256,21 @@ class HackbenApp:
                 except Exception:
                     pass
 
-            print(Fore.GREEN + "\n" + "=" * 65)
-            print(Fore.YELLOW + Style.BRIGHT + f"   🎉 MISSION COMPLETED: {sukses_count}/{total_sessions} Sesi Berhasil!")
+            # Professional Terminal Operational Report for Operator/Employee
+            rate = int((sukses_count / total_sessions) * 100) if total_sessions > 0 else 0
+            now_str = time.strftime("%Y-%m-%d %H:%M:%S")
+            print(Fore.CYAN + "\n" + "=" * 65)
+            print(Fore.YELLOW + Style.BRIGHT + "   📊 REKAPITULASI HASIL OPERASIONAL")
+            print(Fore.CYAN + "=" * 65)
+            print(Fore.WHITE + f"   🏢 Target Store     : {target_store_name}")
+            print(Fore.WHITE + f"   🍱 Layanan          : {service_type}")
+            print(Fore.WHITE + f"   📈 Sesi Berhasil    : {sukses_count}/{total_sessions} ({rate}% Sukses)")
+            print(Fore.WHITE + f"   ⏰ Selesai Pada     : {now_str}")
+            print(Fore.CYAN + "=" * 65)
+            if sukses_count == total_sessions:
+                print(Fore.GREEN + Style.BRIGHT + f"   🎉 MISI SELESAI: Seluruh {total_sessions} Sesi Sukses Terkirim!")
+            else:
+                print(Fore.YELLOW + Style.BRIGHT + f"   ⚠️ MISI SELESAI: {sukses_count}/{total_sessions} Sesi Berhasil.")
             print(Fore.CYAN + "=" * 65)
             input(Fore.YELLOW + "\n   [Tekan Enter untuk kembali ke Menu Utama...]" + Fore.RESET)
             break
