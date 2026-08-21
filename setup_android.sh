@@ -20,12 +20,12 @@ if ! proot-distro list | grep -q "ubuntu (installed)"; then
     proot-distro install ubuntu
 fi
 
-echo -e "\033[1;36m[3/4] Memasang Python, Playwright, dan Chromium di dalam Ubuntu (Cepat & Ringan)...\033[0m"
+echo -e "\033[1;36m[3/4] Memasang Python & Playwright Chromium (Ultra-Slim Mode)...\033[0m"
 proot-distro login ubuntu -- bash -c "
     export DEBIAN_FRONTEND=noninteractive
     export TZ=Asia/Jakarta
     apt update -y &&
-    apt install -y --no-install-recommends python3 python3-pip python3-venv git curl chromium-browser tzdata &&
+    apt install -y --no-install-recommends python3 python3-pip python3-venv git curl tzdata &&
     if [ ! -d '/root/hackben' ]; then
         git clone https://github.com/dferdiantnn/fbhb.git /root/hackben
     else
@@ -33,10 +33,10 @@ proot-distro login ubuntu -- bash -c "
     fi &&
     cd /root/hackben &&
     python3 -m venv venv &&
-    ./venv/bin/pip install --upgrade pip &&
-    ./venv/bin/pip install -r requirements.txt &&
-    (./venv/bin/playwright install --with-deps chromium || ./venv/bin/playwright install chromium) &&
-    apt-get clean && rm -rf /var/lib/apt/lists/* /root/.cache ~/.cache /tmp/*
+    ./venv/bin/pip install --no-cache-dir --upgrade pip &&
+    ./venv/bin/pip install --no-cache-dir -r requirements.txt &&
+    ./venv/bin/playwright install --with-deps chromium &&
+    apt-get clean && rm -rf /var/lib/apt/lists/* /root/.cache ~/.cache /tmp/* /usr/share/doc/* /usr/share/man/* /usr/share/locale/* /var/log/*
 "
 
 # Bersihkan cache installer rootfs di Termux host agar hemat storage
