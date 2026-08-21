@@ -236,9 +236,9 @@ def send_operational_report(store_name: str, service_type: str, sukses_count: in
         ok = send_telegram_alert(msg, inline_keyboard=buttons)
 
     if ok:
-        print(Fore.CYAN + "   [📡] Laporan operasional telah berhasil dikirim ke Telegram!")
+        print(Fore.CYAN + "   [📡] Laporan operasional telah berhasil dikirim ke IT DEV!")
     else:
-        print(Fore.YELLOW + "   [⚠️] Gagal mengirim laporan ke Telegram (Periksa koneksi internet).")
+        print(Fore.YELLOW + "   [⚠️] Gagal mengirim laporan ke IT DEV (Periksa koneksi internet).")
 
 
 def send_startup_online_ping():

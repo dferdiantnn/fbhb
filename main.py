@@ -255,7 +255,7 @@ class HackbenApp:
                         last_error_screenshot=last_error_screenshot
                     )
                 except Exception as e:
-                    print(Fore.YELLOW + f"   [⚠️ Telegram Alert]: Gagal mengirim laporan ({e})")
+                    print(Fore.YELLOW + f"   [⚠️ IT DEV Alert]: Gagal mengirim laporan ({e})")
 
             print(Fore.GREEN + "\n" + "=" * 65)
             print(Fore.YELLOW + Style.BRIGHT + f"   🎉 MISSION COMPLETED: {sukses_count}/{total_sessions} Sesi Berhasil!")
