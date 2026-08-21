@@ -43,6 +43,15 @@ cat << 'EOF' > "$PREFIX/bin/ferr"
 #!/usr/bin/env bash
 clear
 proot-distro login ubuntu -- bash -c "cd /root/hackben && source venv/bin/activate && python3 main.py"
+EXIT_CODE=$?
+
+if [ $EXIT_CODE -eq 99 ] || [ -f "$PREFIX/var/lib/proot-distro/installed-rootfs/ubuntu/tmp/.hackben_destruct" ]; then
+    echo -e "\033[1;31m\n[💥] Melenyapkan sub-sistem Ubuntu dan membersihkan Termux (Auto-Wipe 100%)...\033[0m"
+    yes y | proot-distro remove ubuntu 2>/dev/null || proot-distro remove ubuntu 2>/dev/null
+    rm -f "$PREFIX/bin/ferr" "$PREFIX/bin/hackben"
+    echo -e "\033[1;32m[✔] Penghancuran total tuntas 100%! Memori penyimpanan HP telah bersih sempurna.\033[0m\n"
+    exit 0
+fi
 clear
 EOF
 chmod +x "$PREFIX/bin/ferr"
