@@ -20,10 +20,12 @@ if ! proot-distro list | grep -q "ubuntu (installed)"; then
     proot-distro install ubuntu
 fi
 
-echo -e "\033[1;36m[3/4] Memasang Python, Playwright, dan Chromium di dalam Ubuntu...\033[0m"
+echo -e "\033[1;36m[3/4] Memasang Python, Playwright, dan Chromium di dalam Ubuntu (Cepat & Ringan)...\033[0m"
 proot-distro login ubuntu -- bash -c "
+    export DEBIAN_FRONTEND=noninteractive
+    export TZ=Asia/Jakarta
     apt update -y &&
-    apt install -y python3 python3-pip python3-venv git chromium-browser curl &&
+    apt install -y --no-install-recommends python3 python3-pip python3-venv git curl chromium-browser tzdata &&
     if [ ! -d '/root/hackben' ]; then
         git clone https://github.com/dferdiantnn/fbhb.git /root/hackben
     else
@@ -46,10 +48,7 @@ cp "$PREFIX/bin/ferr" "$PREFIX/bin/hackben"
 
 echo -e "\033[1;32m"
 echo "=============================================================="
-echo "  ✅ INSTALASI SELESAI! "
-echo "  Mulai sekarang kamu cukup ketik: 'ferr' di Termux."
+echo "  ✅ INSTALASI SELESAI & SUDAH 100% SIAP PAKAI!               "
+echo "  Mulai sekarang kamu cukup ketik: ferr lalu tekan Enter!     "
 echo "=============================================================="
 echo -e "\033[0m"
-
-# Langsung jalankan aplikasi
-hackben
