@@ -3,7 +3,7 @@
 </p>
 
 # ⚡ HACKBEN - Universal Next-Gen Automation Suite
-`Versi: v41.0.0 (Universal Multi-Platform Release)`
+`Versi: v41.0.2 (Universal Multi-Platform Release)`
 
 [![Python Version](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13%20%7C%203.14-blue?logo=python&logoColor=white)](https://python.org)
 [![Engine](https://img.shields.io/badge/Engine-Playwright%20Chromium%20Async-green?logo=playwright&logoColor=white)](https://playwright.dev)
@@ -14,33 +14,62 @@
 
 ---
 
-## ⚡ 1-Line Auto-Installer (Zero-Setup Bootstrap)
+## ⚡ Panduan Instalasi & Cara Menjalankan Program (Multi-Platform)
 
-Cukup **copy-paste 1 baris perintah** di bawah ini sesuai perangkat Anda. Seluruh kebutuhan (*Git, Python Virtual Environment, Dependensi Pip, Chromium Browser Engine, hingga Sub-sistem Android*) akan otomatis terunduh lengkap dan langsung menjalankan program!
+Pilih sistem operasi yang Anda gunakan di bawah ini. Instalasi hanya perlu dilakukan **1 kali saja** dan semua bahan (*Python, venv, library, Chromium*) akan otomatis terunduh lengkap.
+
+---
 
 ### 📱 1. HP Android (via Termux)
-Buka aplikasi **Termux**, lalu paste perintah ini:
-```bash
-curl -sSL https://raw.githubusercontent.com/dferdiantnn/fbhb/main/setup_android.sh | bash
-```
-> *Setelah terpasang, kapanpun Anda ingin membuka bot di Termux, cukup ketik: `hackben`*
+
+* **📥 Instalasi Pertama Kali (Cukup 1x Saja):**
+  Buka aplikasi **Termux**, lalu copy-paste perintah 1-baris ini:
+  ```bash
+  curl -sSL https://raw.githubusercontent.com/dferdiantnn/fbhb/main/setup_android.sh | bash
+  ```
+
+* **▶️ Cara Menjalankan Seterusnya (Kapanpun Ingin Dipakai):**
+  Cukup buka aplikasi Termux, lalu ketik:
+  ```bash
+  hackben
+  ```
 
 ---
 
 ### 🪟 2. Windows (Laptop / PC Karyawan)
-Buka **PowerShell**, lalu paste perintah ini:
-```powershell
-irm https://raw.githubusercontent.com/dferdiantnn/fbhb/main/setup.ps1 | iex
-```
-*(Atau download repo lalu klik 2x file `install.bat`)*
+
+* **📥 Instalasi Pertama Kali (Cukup 1x Saja):**
+  Buka **PowerShell**, lalu copy-paste perintah 1-baris ini:
+  ```powershell
+  irm https://raw.githubusercontent.com/dferdiantnn/fbhb/main/setup.ps1 | iex
+  ```
+
+* **▶️ Cara Menjalankan Seterusnya (Tanpa Perlu Install Ulang):**
+  * **Cara 1 (Paling Mudah):** Buka folder `hackben`, lalu klik 2x file **`install.bat`**.
+  * **Cara 2 (Lewat Terminal / CMD):**
+    ```cmd
+    cd hackben
+    venv\Scripts\activate
+    python main.py
+    ```
 
 ---
 
 ### 🍎 3. macOS & 🐧 Linux
-Buka **Terminal**, lalu paste perintah ini:
-```bash
-curl -sSL https://raw.githubusercontent.com/dferdiantnn/fbhb/main/setup.sh | bash
-```
+
+* **📥 Instalasi Pertama Kali (Cukup 1x Saja):**
+  Buka **Terminal**, lalu copy-paste perintah 1-baris ini:
+  ```bash
+  curl -sSL https://raw.githubusercontent.com/dferdiantnn/fbhb/main/setup.sh | bash
+  ```
+
+* **▶️ Cara Menjalankan Seterusnya (Tanpa Perlu Install Ulang):**
+  Buka Terminal, lalu jalankan perintah singkat ini:
+  ```bash
+  cd hackben
+  source venv/bin/activate
+  python3 main.py
+  ```
 
 ---
 
