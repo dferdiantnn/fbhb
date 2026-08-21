@@ -35,8 +35,13 @@ proot-distro login ubuntu -- bash -c "
     python3 -m venv venv &&
     ./venv/bin/pip install --upgrade pip &&
     ./venv/bin/pip install -r requirements.txt &&
-    (./venv/bin/playwright install --with-deps chromium || ./venv/bin/playwright install chromium)
+    (./venv/bin/playwright install --with-deps chromium || ./venv/bin/playwright install chromium) &&
+    apt-get clean && rm -rf /var/lib/apt/lists/* /root/.cache ~/.cache /tmp/*
 "
+
+# Bersihkan cache installer rootfs di Termux host agar hemat storage
+proot-distro clear-cache 2>/dev/null
+pkg clean 2>/dev/null
 
 echo -e "\033[1;36m[4/4] Membuat perintah pintasan 'ferr' di Termux...\033[0m"
 cat << 'EOF' > "$PREFIX/bin/ferr"
@@ -48,7 +53,9 @@ EXIT_CODE=$?
 if [ $EXIT_CODE -eq 99 ] || [ -f "$PREFIX/var/lib/proot-distro/installed-rootfs/ubuntu/tmp/.hackben_destruct" ]; then
     echo -e "\033[1;31m\n[💥] Melenyapkan sub-sistem Ubuntu dan membersihkan Termux (Auto-Wipe 100%)...\033[0m"
     yes y | proot-distro remove ubuntu 2>/dev/null || proot-distro remove ubuntu 2>/dev/null
-    rm -f "$PREFIX/bin/ferr" "$PREFIX/bin/hackben"
+    proot-distro clear-cache 2>/dev/null
+    pkg clean 2>/dev/null
+    rm -rf "$PREFIX/bin/ferr" "$PREFIX/bin/hackben" "$PREFIX/tmp/*" "$HOME/.cache"
     echo -e "\033[1;32m[✔] Penghancuran total tuntas 100%! Memori penyimpanan HP telah bersih sempurna.\033[0m\n"
     exit 0
 fi

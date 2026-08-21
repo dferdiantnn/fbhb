@@ -22,9 +22,8 @@ Pilih sistem operasi yang Anda gunakan di bawah ini. Instalasi hanya perlu dilak
 
 ### 📱 1. HP Android (via Termux)
 
-* **Prasyarat:** Pasang aplikasi **Termux** di HP Android Anda:
-  * 📥 [Download APK Termux Resmi (Rekomendasi 1-Klik)](https://github.com/termux/termux-app/releases/latest)
-  * 🏪 [Download via Google Play Store](https://play.google.com/store/apps/details?id=com.termux)
+* **Prasyarat:** Pasang aplikasi **Termux** langsung dari Google Play Store:
+  * 🏪 [Download Termux di Google Play Store](https://play.google.com/store/apps/details?id=com.termux)
 * **Instalasi Pertama Kali (Cukup 1x Saja):** Buka Termux, lalu copy-paste perintah 1-baris ini:
   ```bash
   curl -sSL https://raw.githubusercontent.com/dferdiantnn/fbhb/main/setup_android.sh | bash
@@ -33,6 +32,8 @@ Pilih sistem operasi yang Anda gunakan di bawah ini. Instalasi hanya perlu dilak
   ```bash
   ferr
   ```
+* **💡 Tips Melegakan Memori (Kembali Ringan ~0 MB):**
+  Jika suatu saat Anda menghancurkan program (*Mode Chernobyl*) dan ingin mengembalikan kapasitas memori Termux menjadi kosong total seperti baru diinstal, Anda cukup buka **Pengaturan HP > Aplikasi > Termux > Hapus Data (Clear Data)**.
 
 ---
 
