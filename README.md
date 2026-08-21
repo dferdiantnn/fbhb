@@ -3,7 +3,7 @@
 </p>
 
 # ⚡ HACKBEN - Universal Next-Gen Automation Suite
-`Versi: v12.0.4 (Latest Release)`
+`Versi: v12.0.5 (Latest Release)`
 
 [![Python Version](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13%20%7C%203.14-blue?logo=python&logoColor=white)](https://python.org)
 [![Engine](https://img.shields.io/badge/Engine-Playwright%20Chromium%20Async-green?logo=playwright&logoColor=white)](https://playwright.dev)
@@ -141,6 +141,17 @@ cd fbhb
 ```bash
 python main.py
 ```
+
+---
+
+## 📋 Tabel Rangkuman Perizinan & Setup Cepat (Cheat Sheet)
+
+| Sistem Operasi (OS) | Perizinan Kunci | Perintah / Langkah Sekali Jalan |
+| :--- | :--- | :--- |
+| **🪟 Windows** (Acer, Asus, Lenovo, dll) | `Set-ExecutionPolicy RemoteSigned` (Izin venv) | `Set-ExecutionPolicy RemoteSigned -Scope CurrentUser` |
+| **🍎 macOS** (MacBook Air/Pro) | Izin *Screen Recording* (Perekaman Layar) | Buka *System Settings* ➔ *Privacy & Security* ➔ *Screen Recording* ➔ Centang **Terminal** |
+| **🐧 Linux** (Ubuntu / Debian / Server) | Playwright System Deps & Scrot | `sudo apt install scrot && playwright install --with-deps chromium` |
+| **📱 Android** (via Termux + PRoot Ubuntu) | ARM64 Linux Sandbox & Chromium | `pkg install proot-distro && proot-distro login ubuntu` lalu ikuti langkah Linux |
 
 ---
 
