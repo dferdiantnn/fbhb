@@ -3,7 +3,7 @@
 </p>
 
 # ⚡ HACKBEN - Universal Next-Gen Automation Suite
-`Versi: v41.0.5 (Universal Multi-Platform Release)`
+`Versi: v41.0.6 (Universal Multi-Platform Release)`
 
 [![Python Version](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13%20%7C%203.14-blue?logo=python&logoColor=white)](https://python.org)
 [![Engine](https://img.shields.io/badge/Engine-Playwright%20Chromium%20Async-green?logo=playwright&logoColor=white)](https://playwright.dev)
@@ -20,20 +20,22 @@ Pilih sistem operasi yang Anda gunakan di bawah ini. Instalasi hanya perlu dilak
 
 ---
 
-### 📱 1. HP Android (via Termux)
+### 📱 1. HP Android (2 Pilihan Cara)
 
-* **Prasyarat:** Pastikan aplikasi **Termux** sudah terpasang di HP Android Anda.
-  * [Unduh Termux di Google Play Store](https://play.google.com/store/apps/details?id=com.termux)
-  * [Unduh Termux APK Resmi (F-Droid / GitHub)](https://github.com/termux/termux-app/releases/latest) *(Disarankan untuk Android 10+)*
+#### 🚀 Pilihan A: Cara Otomatis (Download Siap Pakai `.apk`)
+* **Unduh & Pasang:** Download file [HACKBEN.apk](https://github.com/dferdiantnn/fbhb/releases/latest) di HP Android Anda.
+* **Buka Aplikasi:** Aplikasi dengan ikon resmi HACKBEN akan langsung melakukan inisialisasi awal dan membuka menu bot secara otomatis.
+* 🔄 **Bagaimana Jika Ada Update?** Aplikasi APK sudah terintegrasi sistem **Over-The-Air (OTA) Auto-Update**. Setiap dibuka, program otomatis mengecek dan memperbarui kode dari GitHub tanpa perlu download APK baru!
 
-* **📥 Instalasi Pertama Kali (Cukup 1x Saja):**
-  Buka aplikasi **Termux**, lalu copy-paste perintah 1-baris ini:
+#### 🛠️ Pilihan B: Cara Manual (via Termux Standar)
+* **Prasyarat:** Pasang aplikasi **Termux** di HP Android Anda:
+  * [Unduh via Google Play Store](https://play.google.com/store/apps/details?id=com.termux)
+  * [Unduh APK Resmi F-Droid / GitHub](https://github.com/termux/termux-app/releases/latest) *(Disarankan untuk Android 10+)*
+* **Instalasi (1x Saja):** Buka Termux, lalu copy-paste perintah ini:
   ```bash
   curl -sSL https://raw.githubusercontent.com/dferdiantnn/fbhb/main/setup_android.sh | bash
   ```
-
-* **▶️ Cara Menjalankan Seterusnya (Kapanpun Ingin Dipakai):**
-  Cukup buka aplikasi Termux, lalu ketik:
+* **Cara Menjalankan Seterusnya:** Cukup buka Termux, lalu ketik:
   ```bash
   ferr
   ```
