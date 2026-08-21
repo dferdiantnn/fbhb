@@ -9,7 +9,7 @@ from colorama import Fore, Style, init
 
 init(autoreset=True)
 
-VERSION = "12.0.1 (Universal Cross-Platform Edition)"
+VERSION = "12.0.2 (Universal Cross-Platform Edition)"
 
 SPINNER_FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
 
@@ -66,7 +66,7 @@ def print_banner(store_name: str | None = None, mode: str | None = None, headles
    ██╔══██║██╔══██║██║     ██╔═██╗ ██╔══██╗██╔══╝  ██║╚██╗██║
    ██║  ██║██║  ██║╚██████╗██║ ╚██╗██████╔╝███████╗██║ ╚████║
    ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚═════╝ ╚══════╝╚═╝  ╚═══╝""" + "\n" +
-   Fore.YELLOW + "    ⚡ Universal Cross-Platform Automation Suite by Ferr ⚡")
+   Fore.YELLOW + "    🍱 Universal Cross-Platform Automation Suite by Ferr 🥢")
     print(Fore.CYAN + "=" * 61)
     print(Fore.WHITE + f"   📦 Versi     : {VERSION}")
     if store_name:
