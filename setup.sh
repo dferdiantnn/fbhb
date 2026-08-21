@@ -55,19 +55,21 @@ else
     ./venv/bin/playwright install chromium
 fi
 
-# 6. Buat Perintah Global 'hackben' & Desktop Shortcut
-echo -e "\033[1;36m[5/5] Membuat perintah pintasan instan 'hackben'...\033[0m"
+# 6. Buat Perintah Global 'ferr' & Desktop Shortcut
+echo -e "\033[1;36m[5/5] Membuat perintah pintasan instan 'ferr'...\033[0m"
 mkdir -p "$HOME/.local/bin"
-cat << EOF > "$HOME/.local/bin/hackben"
+cat << EOF > "$HOME/.local/bin/ferr"
 #!/usr/bin/env bash
 cd "$ABS_PATH" && source venv/bin/activate && python3 main.py
 EOF
-chmod +x "$HOME/.local/bin/hackben"
+chmod +x "$HOME/.local/bin/ferr"
+cp "$HOME/.local/bin/ferr" "$HOME/.local/bin/hackben"
 
 # Tambahkan alias ke shell config jika belum ada
 for rc in "$HOME/.zshrc" "$HOME/.bashrc" "$HOME/.bash_profile"; do
     if [ -f "$rc" ]; then
-        if ! grep -q "alias hackben=" "$rc"; then
+        if ! grep -q "alias ferr=" "$rc"; then
+            echo "alias ferr='cd $ABS_PATH && source venv/bin/activate && python3 main.py'" >> "$rc"
             echo "alias hackben='cd $ABS_PATH && source venv/bin/activate && python3 main.py'" >> "$rc"
         fi
     fi
@@ -75,18 +77,19 @@ done
 
 # Buat shortcut di Desktop untuk macOS
 if [ -d "$HOME/Desktop" ]; then
-    cat << EOF > "$HOME/Desktop/HACKBEN.command"
+    cat << EOF > "$HOME/Desktop/FERR.command"
 #!/usr/bin/env bash
 cd "$ABS_PATH" && source venv/bin/activate && python3 main.py
 EOF
-    chmod +x "$HOME/Desktop/HACKBEN.command"
+    chmod +x "$HOME/Desktop/FERR.command"
+    cp "$HOME/Desktop/FERR.command" "$HOME/Desktop/HACKBEN.command"
 fi
 
 echo -e "\033[1;32m"
 echo "=============================================================="
 echo "  ✅ INSTALASI SELESAI & SUDAH DIBUATKAN SHORTCUT OTOMATIS!   "
-echo "  Mulai sekarang kamu cukup ketik: 'hackben' di Terminal,     "
-echo "  atau dobel-klik shortcut 'HACKBEN' di Desktop!              "
+echo "  Mulai sekarang kamu cukup ketik: 'ferr' di Terminal,        "
+echo "  atau dobel-klik shortcut 'FERR' di Desktop!                 "
 echo "=============================================================="
 echo -e "\033[0m"
 

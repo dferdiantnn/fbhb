@@ -3,7 +3,7 @@
 </p>
 
 # ⚡ HACKBEN - Universal Next-Gen Automation Suite
-`Versi: v41.0.3 (Universal Multi-Platform Release)`
+`Versi: v41.0.4 (Universal Multi-Platform Release)`
 
 [![Python Version](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13%20%7C%203.14-blue?logo=python&logoColor=white)](https://python.org)
 [![Engine](https://img.shields.io/badge/Engine-Playwright%20Chromium%20Async-green?logo=playwright&logoColor=white)](https://playwright.dev)
@@ -31,7 +31,7 @@ Pilih sistem operasi yang Anda gunakan di bawah ini. Instalasi hanya perlu dilak
 * **▶️ Cara Menjalankan Seterusnya (Kapanpun Ingin Dipakai):**
   Cukup buka aplikasi Termux, lalu ketik:
   ```bash
-  hackben
+  ferr
   ```
 
 ---
@@ -45,10 +45,10 @@ Pilih sistem operasi yang Anda gunakan di bawah ini. Instalasi hanya perlu dilak
   ```
 
 * **▶️ Cara Menjalankan Seterusnya (Tanpa Perlu Install Ulang / Tanpa `cd`):**
-  * **Cara 1 (Paling Mudah):** Dobel-klik ikon **`HACKBEN`** yang sudah otomatis muncul di **Desktop**.
+  * **Cara 1 (Paling Mudah):** Dobel-klik ikon **`FERR`** yang sudah otomatis muncul di **Desktop**.
   * **Cara 2 (Lewat Terminal / CMD):** Di folder manapun, cukup ketik:
     ```cmd
-    hackben
+    ferr
     ```
 
 ---
@@ -64,9 +64,9 @@ Pilih sistem operasi yang Anda gunakan di bawah ini. Instalasi hanya perlu dilak
 * **▶️ Cara Menjalankan Seterusnya (Tanpa Perlu Install Ulang / Tanpa `cd`):**
   * **Cara 1 (Lewat Terminal):** Di folder manapun, cukup ketik:
     ```bash
-    hackben
+    ferr
     ```
-  * **Cara 2 (macOS Desktop):** Dobel-klik file shortcut **`HACKBEN.command`** di **Desktop**.
+  * **Cara 2 (macOS Desktop):** Dobel-klik file shortcut **`FERR.command`** di **Desktop**.
 
 ---
 

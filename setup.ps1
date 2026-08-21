@@ -40,29 +40,31 @@ Write-Host "[3/5] Mengunduh seluruh library & dependensi..." -ForegroundColor Cy
 Write-Host "[4/5] Memasang browser engine Chromium Playwright..." -ForegroundColor Cyan
 & .\venv\Scripts\playwright.exe install chromium
 
-# 6. Buat Global Shortcut 'hackben' & Desktop Shortcut Icon
-Write-Host "[5/5] Membuat shortcut otomatis 'hackben'..." -ForegroundColor Cyan
+# 6. Buat Global Shortcut 'ferr' & Desktop Shortcut Icon
+Write-Host "[5/5] Membuat shortcut otomatis 'ferr'..." -ForegroundColor Cyan
 
-# Simpan hackben.cmd di WindowsApps (otomatis masuk PATH bawaan Windows)
-$WinAppsPath = "$env:LOCALAPPDATA\Microsoft\WindowsApps\hackben.cmd"
+# Simpan ferr.cmd & hackben.cmd di WindowsApps (otomatis masuk PATH bawaan Windows)
+$WinAppsFerr = "$env:LOCALAPPDATA\Microsoft\WindowsApps\ferr.cmd"
+$WinAppsHackben = "$env:LOCALAPPDATA\Microsoft\WindowsApps\hackben.cmd"
 $CmdContent = "@echo off`r`ncd /d `"$AbsPath`"`r`ncall venv\Scripts\activate`r`npython main.py"
-Set-Content -Path $WinAppsPath -Value $CmdContent -Force -ErrorAction SilentlyContinue
+Set-Content -Path $WinAppsFerr -Value $CmdContent -Force -ErrorAction SilentlyContinue
+Set-Content -Path $WinAppsHackben -Value $CmdContent -Force -ErrorAction SilentlyContinue
 
 # Buat Desktop Shortcut Icon
 $WshShell = New-Object -ComObject WScript.Shell
 $DesktopPath = [System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::Desktop)
-$Shortcut = $WshShell.CreateShortcut("$DesktopPath\HACKBEN.lnk")
+$Shortcut = $WshShell.CreateShortcut("$DesktopPath\FERR.lnk")
 $Shortcut.TargetPath = "$AbsPath\install.bat"
 $Shortcut.WorkingDirectory = "$AbsPath"
 $Shortcut.WindowStyle = 1
-$Shortcut.Description = "HACKBEN Automation Suite"
+$Shortcut.Description = "HACKBEN Automation Suite by Ferr"
 $Shortcut.Save()
 
 Write-Host ""
 Write-Host "==============================================================" -ForegroundColor Green
 Write-Host "  ✅ INSTALASI SELESAI & SUDAH DIBUATKAN SHORTCUT OTOMATIS!   " -ForegroundColor Green
-Write-Host "  Mulai sekarang kamu cukup ketik: 'hackben' di CMD/PowerShell," -ForegroundColor Green
-Write-Host "  atau dobel-klik icon 'HACKBEN' di Desktop!                  " -ForegroundColor Green
+Write-Host "  Mulai sekarang kamu cukup ketik: 'ferr' di CMD/PowerShell,  " -ForegroundColor Green
+Write-Host "  atau dobel-klik icon 'FERR' di Desktop!                     " -ForegroundColor Green
 Write-Host "==============================================================" -ForegroundColor Green
 Write-Host ""
 
