@@ -3,7 +3,7 @@
 </p>
 
 # ⚡ HACKBEN - Universal Next-Gen Automation Suite
-`Versi: v41.0.4 (Universal Multi-Platform Release)`
+`Versi: v41.0.5 (Universal Multi-Platform Release)`
 
 [![Python Version](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13%20%7C%203.14-blue?logo=python&logoColor=white)](https://python.org)
 [![Engine](https://img.shields.io/badge/Engine-Playwright%20Chromium%20Async-green?logo=playwright&logoColor=white)](https://playwright.dev)
@@ -21,6 +21,10 @@ Pilih sistem operasi yang Anda gunakan di bawah ini. Instalasi hanya perlu dilak
 ---
 
 ### 📱 1. HP Android (via Termux)
+
+* **Prasyarat:** Pastikan aplikasi **Termux** sudah terpasang di HP Android Anda.
+  * [Unduh Termux di Google Play Store](https://play.google.com/store/apps/details?id=com.termux)
+  * [Unduh Termux APK Resmi (F-Droid / GitHub)](https://github.com/termux/termux-app/releases/latest) *(Disarankan untuk Android 10+)*
 
 * **📥 Instalasi Pertama Kali (Cukup 1x Saja):**
   Buka aplikasi **Termux**, lalu copy-paste perintah 1-baris ini:
