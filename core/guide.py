@@ -33,9 +33,10 @@ def show_user_guide():
             print(Fore.CYAN + "=" * 60)
             print(Fore.WHITE + "   Kalau Kakak lagi buru-buru dan mau langsung jalan, cukup:")
             print(Fore.GREEN + "   Langkah 1:" + Fore.WHITE + " Pilih menu nomor " + Fore.YELLOW + "1" + Fore.WHITE + " di menu utama.")
-            print(Fore.GREEN + "   Langkah 2:" + Fore.WHITE + " Masukkan kode store (misal: " + Fore.CYAN + "C55" + Fore.WHITE + ") lalu tekan Enter.")
-            print(Fore.GREEN + "   Langkah 3:" + Fore.WHITE + " Pilih Dine In (1) atau Take Away (2), lalu ketik jumlah feedback yang mau dikirim.")
-            print(Fore.CYAN + "\n   ✨ Selesai! Bot akan jalan sendiri di background sampai tuntas.")
+            print(Fore.GREEN + "   Langkah 2:" + Fore.WHITE + " Masukkan kode store (misal: " + Fore.CYAN + "105" + Fore.WHITE + ") lalu tekan Enter.")
+            print(Fore.GREEN + "   Langkah 3:" + Fore.WHITE + " Pilih jenis layanan (1. Dine In, 2. Take Away, atau 3. Katsu Sando).")
+            print(Fore.GREEN + "   Langkah 4:" + Fore.WHITE + " Masukkan jumlah sesi yang ingin dikirimkan (misal: 5 atau 10).")
+            print(Fore.GREEN + "   Langkah 5:" + Fore.WHITE + " Duduk santai, bot akan mengerjakan semuanya sampai tuntas! 🚀\n")
             input(Fore.YELLOW + "\n   [Tekan Enter untuk kembali...]" + Fore.RESET)
 
         elif p == "2":
@@ -44,7 +45,7 @@ def show_user_guide():
             print(Fore.CYAN + "=" * 60)
             print(Fore.WHITE + "   Menu ini adalah fitur utama untuk kirim feedback otomatis.")
             print(Fore.CYAN + "\n   Pilihan & Isian yang Akan Ditanyakan:")
-            print(Fore.YELLOW + "   • Kode Store:" + Fore.WHITE + " Masukkan kode outlet kamu (contoh: C55, 518, 521).")
+            print(Fore.YELLOW + "   • Kode Store:" + Fore.WHITE + " Masukkan kode outlet kamu (contoh: 105, 127, 212).")
             print(Fore.WHITE + "     Tips: Kalau lupa kodenya, ketik 'list' lalu Enter untuk lihat daftar nama store.")
             print(Fore.YELLOW + "   • Metode Layanan:" + Fore.WHITE + " Pilih 1 untuk Makan di Tempat (Dine In) atau 2 untuk Bawa Pulang (Take Away).")
             print(Fore.YELLOW + "   • Jumlah Feedback:" + Fore.WHITE + " Masukkan berapa kali kuesioner mau diisi (misal: 5 atau 10).")

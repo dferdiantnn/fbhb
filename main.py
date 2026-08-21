@@ -129,7 +129,7 @@ class HackbenApp:
             
             # 1. Pilih Store
             print(Fore.GREEN + "   [ KONFIGURASI TARGET STORE ]")
-            print(Fore.WHITE + "   • Ketik kode store langsung (contoh: C55, 518, 104)")
+            print(Fore.WHITE + "   • Ketik kode store langsung (contoh: 105, 127, 212)")
             print(Fore.CYAN + "   • Ketik 'list' atau 'cari' untuk melihat store per wilayah")
             print(Fore.MAGENTA + "   • Ketik '0' untuk kembali ke Menu Utama\n")
             
