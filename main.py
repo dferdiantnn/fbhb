@@ -217,6 +217,7 @@ class HackbenApp:
             spinner = Spinner()
             sukses_count = 0
             errors_list = []
+            last_error_screenshot = None
             try:
                 for i in range(1, total_sessions + 1):
                     print(Fore.YELLOW + f"   ▶ Menjalankan Sesi #{i} dari {total_sessions}:")
@@ -253,8 +254,8 @@ class HackbenApp:
                         errors_summary=errors_list,
                         last_error_screenshot=last_error_screenshot
                     )
-                except Exception:
-                    pass
+                except Exception as e:
+                    print(Fore.YELLOW + f"   [⚠️ Telegram Alert]: Gagal mengirim laporan ({e})")
 
             print(Fore.GREEN + "\n" + "=" * 65)
             print(Fore.YELLOW + Style.BRIGHT + f"   🎉 MISSION COMPLETED: {sukses_count}/{total_sessions} Sesi Berhasil!")
