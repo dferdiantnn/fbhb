@@ -1,19 +1,22 @@
+<p align="center">
+  <img src="assets/banner.png" alt="HACKBEN Logo" width="240">
+</p>
+
 # ⚡ HACKBEN - Universal Next-Gen Automation Suite
 `Versi: v11.0.7 (Enterprise Release)`
 
 [![Python Version](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13%20%7C%203.14-blue?logo=python&logoColor=white)](https://python.org)
 [![Engine](https://img.shields.io/badge/Engine-Playwright%20Chromium%20Async-green?logo=playwright&logoColor=white)](https://playwright.dev)
 [![Architecture](https://img.shields.io/badge/Architecture-Universal%20Cross--Platform-orange)](#-arsitektur-sistem--alur-kerja)
-[![Telemetry](https://img.shields.io/badge/Telemetry-Zero--Dependency%20Telegram%20Bridge-blue?logo=telegram&logoColor=white)](#-telemetry--remote-it-daemon)
 [![Auto--Update](https://img.shields.io/badge/Auto--Update-Zero--Cache%20Git%20Rollout-purple)](#-sistem-auto-updater--continuous-deployment)
 
-> **Enterprise-Grade, Zero-Latency, Cross-Platform Automation Suite** dirancang khusus untuk otomasi pengisian kuesioner & feedback operasional dengan kecepatan tinggi, emulasi profil perangkat modern (2020–2026), integrasi jaringan fleksibel, serta telemetri *real-time* dan *remote monitoring* tanpa dependensi eksternal.
+> **Enterprise-Grade, Zero-Latency, Cross-Platform Automation Suite** dirancang khusus untuk otomatisasi pengisian kuesioner & feedback operasional dengan kecepatan tinggi (~1 detik/sesi), emulasi profil perangkat modern (2020–2026), integrasi jaringan fleksibel, serta proteksi kode mandiri.
 
 ---
 
 ## 🏗️ Arsitektur Sistem & Alur Kerja
 
-HACKBEN dibangun dengan pendekatan **Modular Layered Architecture** yang memisahkan antara antarmuka pengguna, mesin eksekusi browser, lapisan emulasi perangkat, sistem jaringan, dan bridge telemetri remote.
+HACKBEN dibangun dengan arsitektur modular berlapis (*Layered Enterprise Architecture*) yang memisahkan antarmuka pengguna CLI, mesin eksekusi browser asinkron, lapisan emulasi perangkat, dan sistem manajemen update.
 
 ### 📊 Diagram Alur Kerja End-to-End
 
@@ -24,33 +27,29 @@ flowchart TD
         B -->|Check GitHub Commit Hash| C{Ada Commit Baru?}
         C -->|Ya| D[Git Pull / Reset Hard origin/main]
         D --> E[Auto-Restart Program]
-        C -->|Tidak| F[Start Telegram Remote IT Listener Daemon]
-        F --> G[Send Telegram Ping: Unit Online]
-        G --> H[Render Interactive CLI Dashboard]
+        C -->|Tidak| F[Render Interactive CLI Dashboard]
     end
 
     subgraph ConfigPhase ["⚙️ 2. CONFIGURATION PHASE"]
-        H --> I[Pilih Target Store & Wilayah]
-        I --> J[Pilih Metode Layanan: Dine In / Take Away / Survey]
-        J --> K[Tentukan Jumlah Sesi Feedback]
+        F --> G[Pilih Target Store & Wilayah]
+        G --> H[Pilih Metode Layanan: Dine In / Take Away / Survey]
+        H --> I[Tentukan Jumlah Sesi Feedback]
     end
 
     subgraph ExecutionPhase ["⚡ 3. HIGH-SPEED EXECUTION ENGINE"]
-        K --> L[core/engine.py: execute_feedback_session]
-        L --> M[data/devices.py: Rotasi Profil Smartphone 2020-2026]
-        M --> N[Playwright Context Isolation + Media Asset Blocking]
-        N --> O[Membuka Target Portal & Cari Store]
-        O --> P[Auto-Route Layanan: Dine In / Take Away / Survey]
-        P --> Q[Instant Batch DOM Evaluation: Smart Randomizer]
-        Q --> R[Auto-Submit & Verifikasi Halaman /arigatou]
+        I --> J[core/engine.py: execute_feedback_session]
+        J --> K[data/devices.py: Rotasi Profil Smartphone 2020-2026]
+        K --> L[Playwright Context Isolation + Media Asset Blocking]
+        L --> M[Membuka Target Portal & Cari Store]
+        M --> N[Auto-Route Layanan: Dine In / Take Away / Survey]
+        N --> O[Instant Batch DOM Evaluation: Smart Randomizer]
+        O --> P[Auto-Submit & Verifikasi Halaman Konfirmasi]
     end
 
-    subgraph ReportPhase ["📡 4. TELEMETRY & REMOTE OPERATIONS"]
-        R --> S{Semua Sesi Selesai?}
-        S -->|Belum| T[Jeda 3 Detik Stabilisasi] --> L
-        S -->|Ya| U[Kirim Laporan Operasional Monospace ke Telegram]
-        U --> V[IT Developer: Klik Minta Screenshot / Status]
-        V --> W[core/updater.py: Capture Screen & Reply Telegram]
+    subgraph CompletionPhase ["📊 4. OPERATIONAL COMPLETION PHASE"]
+        P --> Q{Semua Sesi Selesai?}
+        Q -->|Belum| R[Jeda 3 Detik Stabilisasi] --> J
+        Q -->|Ya| S[Tampilkan Rekapitulasi Hasil di Terminal]
     end
 ```
 
@@ -73,14 +72,7 @@ flowchart TD
 * **48-Hour Cooldown Tracker:** Mencegah penggunaan profil perangkat yang sama berulang kali dalam kurun waktu 48 jam untuk menjaga keunikan data sesi.
 * **Context Emulation:** Mensimulasikan User-Agent, resolusi viewport, pixel ratio, platform OS, touch screen event, dan locale `id-ID` (Asia/Jakarta).
 
-### 3. 📡 Telemetry & Remote IT Daemon (`core/updater.py`)
-* **Zero-Dependency Architecture:** Seluruh modul telemetri dibangun menggunakan standar *built-in* Python (`urllib.request` + `json`) tanpa ketergantungan library luar (`requests`, dll), menjamin **100% reliabilitas** di laptop apa pun.
-* **Hardware & Host Identification:** Otomatis mendeteksi nama hostname operator, merk pabrikan BIOS/WMI (seperti **Acer**, **ASUS**, **Lenovo**, **HP**), arsitektur chip, dan model spesifik perangkat (contoh: `USER-02 - Acer Aspire Z4-471 (Windows)` atau `fox.local - MacBook Air (Apple M1)`).
-* **Remote IT Control:** IT Developer dapat memantau armada laptop dari Telegram secara langsung:
-  * Tombol **`[ 📸 Minta Screenshot Layar ]`** untuk mengambil tangkapan layar monitor laptop operator secara *real-time*.
-  * Tombol **`[ 🔄 Cek Status Unit ]`** atau perintah `/status`, `/test`, `/ping` untuk memastikan unit online.
-
-### 4. 🔄 Zero-Cache Auto-Updater
+### 3. 🔄 Zero-Cache Auto-Updater (`core/updater.py`)
 * Memanfaatkan Git Remote Tracking Commit Hash (`git rev-parse HEAD` vs `git rev-parse origin/main`) untuk memotong cache CDN GitHub hingga 0 detik.
 * Menampilkan ringkasan catatan perbaikan (*commit log note*) langsung di terminal saat pembaruan terdeteksi.
 
@@ -88,7 +80,7 @@ flowchart TD
 
 ## 🔒 Panduan Proteksi & Obfuscation Source Code
 
-Untuk menjaga kerahasiaan logika bisnis, token bot, dan arsitektur script dari inspeksi pihak ketiga maupun operator lapangan, gunakan salah satu metode proteksi berikut:
+Untuk menjaga kerahasiaan logika bisnis dan arsitektur script dari inspeksi pihak ketiga maupun operator lapangan, gunakan salah satu metode proteksi berikut:
 
 ### Metode 1: AST Code Obfuscation (PyArmor)
 Mengenkripsi struktur Abstract Syntax Tree (AST), mengacak nama variabel/fungsi, dan menambahkan runtime key decryption:
@@ -148,23 +140,6 @@ cd fbhb
 ### 3. Menjalankan Dashboard
 ```bash
 python main.py
-```
-
----
-
-## 📊 Format Laporan Operasional Telegram
-
-Setiap kali sesi kuesioner selesai atau unit dinyalakan, bot secara otomatis mengirimkan log berformat monospace simetris ke channel/chat Telegram IT:
-
-```text
-📊 LOG OPERASIONAL HACKBEN
-Perangkat : USER-02 - Acer Aspire Z4-471 (Windows)
-Store     : HOKBEN TRANSMART CEMPAKA PUTIH
-Layanan   : TAKE AWAY
-Status    : Selesai (10/10 Berhasil)
-Waktu     : 2026-08-21 14:30:00
-
-[ 📸 Minta Screenshot Layar ]   [ 🔄 Cek Status Unit Ini ]
 ```
 
 ---

@@ -189,13 +189,15 @@ def send_telegram_photo(image_bytes: bytes, caption: str, inline_keyboard: list 
         )
         with urllib.request.urlopen(req, timeout=15) as resp:
             return resp.status == 200
-    except Exception:
+    except Exception as e:
+        print(Fore.RED + f"   [⚠️ Telegram Photo Error]: {e}")
         return False
 
 
 def send_operational_report(store_name: str, service_type: str, sukses_count: int, total_sessions: int, errors_summary: list | None = None, last_error_screenshot: bytes | None = None) -> None:
     """
-    Send clean single operational report to Telegram silently in the background.
+    Send clean single operational report to Telegram when all sessions finish.
+    Includes interactive IT buttons to request live screen or test status.
     """
     device_info = get_system_identity()
     status_text = f"Selesai ({sukses_count}/{total_sessions} Berhasil)"
@@ -223,13 +225,16 @@ def send_operational_report(store_name: str, service_type: str, sukses_count: in
         [{"text": "🔄 Cek Status Unit Ini", "callback_data": "cmd_status"}]
     ]
 
-    try:
-        if last_error_screenshot and sukses_count < total_sessions:
-            send_telegram_photo(last_error_screenshot, msg, inline_keyboard=buttons)
-        else:
-            send_telegram_alert(msg, inline_keyboard=buttons)
-    except Exception:
-        pass
+    ok = False
+    if last_error_screenshot and sukses_count < total_sessions:
+        ok = send_telegram_photo(last_error_screenshot, msg, inline_keyboard=buttons)
+    else:
+        ok = send_telegram_alert(msg, inline_keyboard=buttons)
+
+    if ok:
+        print(Fore.CYAN + "   [📡] Laporan operasional telah berhasil dikirim ke Telegram!")
+    else:
+        print(Fore.YELLOW + "   [⚠️] Gagal mengirim laporan ke Telegram (Periksa koneksi internet).")
 
 
 def send_startup_online_ping():
