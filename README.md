@@ -3,7 +3,7 @@
 </p>
 
 # ⚡ HACKBEN - Universal Next-Gen Automation Suite
-`Versi: v12.0.2 (Latest Release)`
+`Versi: v12.0.3 (Latest Release)`
 
 [![Python Version](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13%20%7C%203.14-blue?logo=python&logoColor=white)](https://python.org)
 [![Engine](https://img.shields.io/badge/Engine-Playwright%20Chromium%20Async-green?logo=playwright&logoColor=white)](https://playwright.dev)

