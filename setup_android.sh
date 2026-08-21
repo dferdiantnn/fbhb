@@ -23,7 +23,7 @@ fi
 echo -e "\033[1;36m[3/4] Memasang Python, Playwright, dan Chromium di dalam Ubuntu...\033[0m"
 proot-distro login ubuntu -- bash -c "
     apt update -y &&
-    apt install -y python3 python3-pip python3-venv git chromium-browser libnss3 libatk-bridge2.0-0 libgtk-3-0 libasound2 libxss1 libx11-xcb1 &&
+    apt install -y python3 python3-pip python3-venv git chromium-browser curl &&
     if [ ! -d '/root/hackben' ]; then
         git clone https://github.com/dferdiantnn/fbhb.git /root/hackben
     else
@@ -33,7 +33,7 @@ proot-distro login ubuntu -- bash -c "
     python3 -m venv venv &&
     ./venv/bin/pip install --upgrade pip &&
     ./venv/bin/pip install -r requirements.txt &&
-    ./venv/bin/playwright install chromium
+    (./venv/bin/playwright install --with-deps chromium || ./venv/bin/playwright install chromium)
 "
 
 echo -e "\033[1;36m[4/4] Membuat perintah pintasan 'ferr' di Termux...\033[0m"
