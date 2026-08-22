@@ -161,4 +161,4 @@ Berikut perbandingan teknis antara skrip versi awal (*Legacy fbhb / fbhbk*) deng
 
 Software ini dikembangkan untuk tujuan otomatisasi uji beban, audit alur sistem, dan efisiensi operasional terdistribusi. Pengguna bertanggung jawab penuh atas penggunaan script pada lingkungan masing-masing.
 
-Copyright © 2026 **dferdiantnn**. All rights reserved.
+Copyright © 2026 **dferdiantn**. All rights reserved.
