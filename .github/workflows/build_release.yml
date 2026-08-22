@@ -1,12 +1,7 @@
-name: 🍳 Masak HACKBEN APK & Windows EXE
+name: 🍳 Masak HACKBEN (Manual Release On-Demand)
 
 on:
-  push:
-    tags:
-      - 'v*'
-    branches:
-      - main
-  workflow_dispatch:
+  workflow_dispatch: # Hanya masak saat tombol 'Run workflow' ditekan manual di GitHub
 
 permissions:
   contents: write
@@ -80,28 +75,22 @@ jobs:
     name: 🚀 Publikasikan ke GitHub Releases
     needs: [build-android-apk, build-windows-exe]
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
+    if: always()
     steps:
-      - name: 📥 Download Android APK Artifact
+      - name: 📥 Download Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: HACKBEN-Android-APK
           path: release_files
-
-      - name: 📥 Download Windows EXE Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: HACKBEN-Windows-EXE
-          path: release_files
+        continue-on-error: true
 
       - name: 🏷️ Buat / Perbarui GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           name: 🍱 HACKBEN Multi-Platform Release (v41.2.8)
-          tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'v41.2.8' }}
+          tag_name: v41.2.8
           draft: false
           prerelease: false
           generate_release_notes: true
-          files: release_files/*
+          files: release_files/**/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
