@@ -28,17 +28,13 @@ jobs:
       - name: 🤖 Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: 📦 Mempersiapkan Proyek Android HACKBEN
-        run: |
-          mkdir -p android/app/src/main/res/mipmap-xxxhdpi
-          cp assets/icon.png android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png 2>/dev/null || true
-          cd android
-          chmod +x gradlew 2>/dev/null || gradle wrapper
+      - name: 🐘 Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
 
-      - name: 🔨 Kompilasi APK Release (Cloud Build)
+      - name: 🔨 Kompilasi APK (Cloud Build)
         run: |
           cd android
-          ./gradlew assembleRelease || ./gradlew assembleDebug
+          gradle assembleDebug --no-daemon
 
       - name: 📦 Cari & Siapkan File APK
         run: |
@@ -72,13 +68,7 @@ jobs:
 
       - name: 🔨 Kompilasi Windows Standalone .EXE
         run: |
-          pyinstaller --noconfirm --onefile --windowed `
-            --icon=assets/icon.ico `
-            --name="HACKBEN" `
-            --add-data="assets;assets" `
-            --add-data="core;core" `
-            --add-data="data;data" `
-            main.py
+          pyinstaller --noconfirm --onefile --name "HACKBEN-Windows-x64" --icon "assets/icon.ico" --add-data "assets;assets" --add-data "core;core" --add-data "data;data" main.py
 
       - name: 📤 Upload Artifact Windows EXE
         uses: actions/upload-artifact@v4
@@ -90,7 +80,7 @@ jobs:
     name: 🚀 Publikasikan ke GitHub Releases
     needs: [build-android-apk, build-windows-exe]
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
+    if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
     steps:
       - name: 📥 Download Android APK Artifact
         uses: actions/download-artifact@v4
