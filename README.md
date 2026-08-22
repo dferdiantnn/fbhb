@@ -20,19 +20,19 @@ Pilih sistem operasi yang Anda gunakan di bawah ini. Instalasi hanya perlu dilak
 
 ---
 
-### 📱 1. HP Android (via Termux)
+### 📱 1. HP Android (Termux / Standalone APK)
 
-* **Prasyarat:** Pasang aplikasi **Termux** langsung dari Google Play Store:
-  * 🏪 [Download Termux di Google Play Store](https://play.google.com/store/apps/details?id=com.termux)
-* **Instalasi Pertama Kali (Cukup 1x Saja):** Buka Termux, lalu copy-paste perintah 1-baris ini:
-  ```bash
-  curl -sSL https://raw.githubusercontent.com/dferdiantnn/fbhb/main/setup_android.sh | bash
-  ```
-* **Cara Menjalankan Seterusnya:** Cukup buka Termux, lalu ketik:
-  ```bash
-  ferr
-  ```
-* **💡 Tips Melegakan Memori (Kembali Ringan ~0 MB):**
+* **Pilihan A (Rekomendasi - via Termux CLI):**
+  * Pasang aplikasi **Termux** langsung dari Google Play Store:
+    * 🏪 [Download Termux di Google Play Store](https://play.google.com/store/apps/details?id=com.termux)
+  * Buka Termux, lalu copy-paste perintah 1-baris ini:
+    ```bash
+    curl -sSL https://raw.githubusercontent.com/dferdiantnn/fbhb/main/setup_android.sh | bash
+    ```
+  * Cara Menjalankan: Cukup buka Termux, lalu ketik `ferr` dan tekan Enter!
+* **Pilihan B (Download APK Jadi yang Dimasak di GitHub):**
+  * 📥 [Download HACKBEN.apk Terbaru (GitHub Releases)](https://github.com/dferdiantnn/fbhb/releases/latest)
+* **💡 Tips Melegakan Memori Termux (Kembali Ringan ~0 MB):**
   Jika suatu saat Anda menghancurkan program (*Mode Chernobyl*) dan ingin mengembalikan kapasitas memori Termux menjadi kosong total seperti baru diinstal, Anda cukup buka **Pengaturan HP > Aplikasi > Termux > Hapus Data (Clear Data)**.
 
 ---
