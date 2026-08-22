@@ -39,18 +39,14 @@ Pilih sistem operasi yang Anda gunakan di bawah ini. Instalasi hanya perlu dilak
 
 ### 🪟 2. Windows (Laptop / PC)
 
-* **📥 Instalasi Pertama Kali (Cukup 1x Saja):**
-  Buka **PowerShell**, lalu copy-paste perintah 1-baris ini:
-  ```powershell
-  irm https://raw.githubusercontent.com/dferdiantnn/fbhb/main/setup.ps1 | iex
-  ```
-
-* **▶️ Cara Menjalankan Seterusnya (Tanpa Perlu Install Ulang / Tanpa `cd`):**
-  * **Cara 1 (Paling Mudah):** Dobel-klik ikon **`FERR`** yang sudah otomatis muncul di **Desktop**.
-  * **Cara 2 (Lewat Terminal / CMD):** Di folder manapun, cukup ketik:
-    ```cmd
-    ferr
+* **Pilihan A (Rekomendasi - Otomatis via PowerShell):**
+  * Buka **PowerShell**, lalu copy-paste perintah 1-baris ini:
+    ```powershell
+    irm https://raw.githubusercontent.com/dferdiantnn/fbhb/main/setup.ps1 | iex
     ```
+  * **Cara Menjalankan Seterusnya:** Dobel-klik shortcut **`FERR`** di Desktop Anda atau cukup ketik `ferr` di CMD / PowerShell.
+* **Pilihan B (Download File .EXE Jadi yang Dimasak di GitHub):**
+  * 📥 [Download HACKBEN-Windows-x64.exe (GitHub Releases)](https://github.com/dferdiantnn/fbhb/releases/latest)
 
 ---
 
